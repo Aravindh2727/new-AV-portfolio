@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, Mail, ArrowRight, ShieldCheck, AlertCircle, Info, CheckCircle2 } from 'lucide-react';
+import { Lock, Mail, ArrowRight, AlertCircle, Info, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '@shared/theme/ThemeToggle';
 
@@ -93,17 +93,20 @@ export default function Login() {
       }}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div style={{
-            width: '54px',
-            height: '54px',
-            borderRadius: '14px',
-            background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: '1rem',
-            boxShadow: '0 0 25px rgba(59, 130, 246, 0.4)'
+            marginBottom: '1.25rem',
+            display: 'inline-block'
           }}>
-            <ShieldCheck size={28} color="#fff" />
+            <img 
+              src="/AV logo icon new.png" 
+              alt="Admin Portal Logo" 
+              style={{ 
+                width: '64px', 
+                height: '64px', 
+                borderRadius: '16px', 
+                objectFit: 'contain',
+                boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)'
+              }} 
+            />
           </div>
           <h1 style={{ fontSize: '1.6rem', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text-main)' }}>
             Admin Portal
