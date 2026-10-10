@@ -1,0 +1,30 @@
+{
+  "name": "developer-ecosystem-2026",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Connected 3-Website Personal Developer Ecosystem (Portfolio, Project Showcase, Admin CMS)",
+  "workspaces": [
+    "portfolio",
+    "project-showcase",
+    "admin"
+  ],
+  "scripts": {
+    "dev:portfolio": "npm --workspace=portfolio run dev",
+    "dev:showcase": "npm --workspace=project-showcase run dev",
+    "dev:admin": "npm --workspace=admin run dev",
+    "build:portfolio": "npm --workspace=portfolio run build",
+    "build:showcase": "npm --workspace=project-showcase run build",
+    "build:admin": "npm --workspace=admin run build",
+    "build:all": "npm run build:portfolio && npm run build:showcase && npm run build:admin"
+  },
+  "keywords": [
+    "portfolio",
+    "developer-showcase",
+    "admin-cms",
+    "firebase",
+    "react",
+    "vite"
+  ],
+  "author": "Aravindh V",
+  "license": "MIT"
+}
