@@ -100,7 +100,7 @@ export default function AdminLayout({ children, title }) {
                 {currentUser?.displayName || 'Admin'}
               </div>
               <div style={{ fontSize: '0.725rem', color: 'var(--text-dim)', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
-                {currentUser?.email || 'admin@portfolio.dev'}
+                {currentUser?.email || 'aravindhvinayagam2007@gmail.com'}
               </div>
             </div>
           </div>

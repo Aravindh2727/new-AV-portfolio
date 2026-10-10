@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, Mail, ArrowRight, ShieldCheck, AlertCircle, Info } from 'lucide-react';
+import { Lock, Mail, ArrowRight, ShieldCheck, AlertCircle, Info, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '@shared/theme/ThemeToggle';
 
@@ -9,12 +9,14 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const { login, isFirebaseConfigured } = useAuth();
+  const [resetMsg, setResetMsg] = useState('');
+  const { login, resetPassword, isFirebaseConfigured } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
+    setResetMsg('');
     if (!email || !password) {
       setErrorMsg('Please enter both email and password.');
       return;
@@ -32,9 +34,19 @@ export default function Login() {
     }
   };
 
-  const fillDemoCreds = () => {
-    setEmail('admin@portfolio.dev');
-    setPassword('admin123456');
+  const handleForgotPassword = async () => {
+    setErrorMsg('');
+    setResetMsg('');
+    setLoading(true);
+    try {
+      await resetPassword();
+      setResetMsg('Password reset link successfully sent to aravindhvinayagam2007@gmail.com.');
+    } catch (err) {
+      console.error(err);
+      setErrorMsg(err.message || 'Failed to send reset email.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -119,6 +131,24 @@ export default function Login() {
           </div>
         )}
 
+        {resetMsg && (
+          <div style={{
+            backgroundColor: 'rgba(16, 185, 129, 0.15)',
+            border: '1px solid rgba(16, 185, 129, 0.3)',
+            borderRadius: '8px',
+            padding: '0.75rem 1rem',
+            color: '#10b981',
+            fontSize: '0.85rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            marginBottom: '1.5rem'
+          }}>
+            <CheckCircle2 size={16} />
+            <span>{resetMsg}</span>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           <div className="form-group">
             <label className="form-label" htmlFor="email">Admin Email</label>
@@ -138,8 +168,25 @@ export default function Login() {
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="password">Password</label>
-            <div style={{ position: 'relative' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <label className="form-label" htmlFor="password" style={{ marginBottom: 0 }}>Password</label>
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                disabled={loading}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--accent-blue)',
+                  fontSize: '0.8rem',
+                  cursor: 'pointer',
+                  padding: 0
+                }}
+              >
+                Forgot Password?
+              </button>
+            </div>
+            <div style={{ position: 'relative', marginTop: '0.5rem' }}>
               <input
                 id="password"
                 type="password"
@@ -160,7 +207,7 @@ export default function Login() {
             style={{ width: '100%', padding: '0.8rem', marginTop: '0.5rem' }}
             disabled={loading}
           >
-            {loading ? 'Authenticating...' : (
+            {loading ? 'Processing...' : (
               <>
                 <span>Sign In to Dashboard</span>
                 <ArrowRight size={16} />
@@ -168,39 +215,6 @@ export default function Login() {
             )}
           </button>
         </form>
-
-        {/* Quick Demo Credentials helper */}
-        <div style={{
-          marginTop: '1.75rem',
-          paddingTop: '1.25rem',
-          borderTop: '1px solid var(--border-color)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0.5rem'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-              <Info size={14} /> Quick Demo Access:
-            </span>
-            <button
-              type="button"
-              onClick={fillDemoCreds}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: 'var(--accent-blue)',
-                fontSize: '0.8rem',
-                cursor: 'pointer',
-                fontWeight: 600
-              }}
-            >
-              Autofill Demo Login
-            </button>
-          </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', fontFamily: 'monospace' }}>
-            Email: admin@portfolio.dev | Pass: admin123456
-          </div>
-        </div>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { subscribeToAuthState, loginUser, logoutUser } from '@shared/firebase/auth';
+import { subscribeToAuthState, loginUser, logoutUser, resetPassword as firebaseResetPassword } from '@shared/firebase/auth';
 import { isFirebaseConfigured } from '@shared/firebase/config';
 
 const AuthContext = createContext(null);
@@ -41,22 +41,7 @@ export function AuthProvider({ children }) {
         throw err;
       }
     } else {
-      // Demo authentication for local evaluation before live credentials are bound
-      if (email.trim().toLowerCase() === 'admin@portfolio.dev' && password === 'admin123456') {
-        const demoUser = {
-          uid: 'admin-local-master',
-          email: 'admin@portfolio.dev',
-          displayName: 'Admin Master',
-          isDemo: true
-        };
-        sessionStorage.setItem('admin_demo_session', JSON.stringify(demoUser));
-        setCurrentUser(demoUser);
-        return demoUser;
-      } else {
-        const err = new Error('Invalid credentials. (For demo mode use admin@portfolio.dev / admin123456)');
-        setError(err.message);
-        throw err;
-      }
+      throw new Error('Firebase authentication is not configured. Please check your .env variables.');
     }
   };
 
@@ -68,8 +53,16 @@ export function AuthProvider({ children }) {
     setCurrentUser(null);
   };
 
+  const resetPassword = async () => {
+    if (isFirebaseConfigured()) {
+      await firebaseResetPassword('aravindhvinayagam2007@gmail.com');
+    } else {
+      throw new Error('Firebase is not configured. Cannot reset password in local demo mode.');
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ currentUser, loading, error, login, logout, isFirebaseConfigured: isFirebaseConfigured() }}>
+    <AuthContext.Provider value={{ currentUser, loading, error, login, logout, resetPassword, isFirebaseConfigured: isFirebaseConfigured() }}>
       {children}
     </AuthContext.Provider>
   );
