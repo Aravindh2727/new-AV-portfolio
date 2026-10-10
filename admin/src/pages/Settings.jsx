@@ -3,7 +3,7 @@ import { Save, Settings as SettingsIcon, Database, ShieldAlert, CheckCircle2, Re
 import AdminLayout from '../components/AdminLayout';
 import ConfirmModal from '../components/ConfirmModal';
 import { useToast } from '../components/Toast';
-import { getSettings, updateSettings, seedAllDataToFirestore } from '@shared/firebase/queries';
+import { getSettings, updateSettings } from '@shared/firebase/queries';
 import { isFirebaseConfigured } from '@shared/firebase/config';
 import { createDefaultSettings } from '@shared/models/schemas';
 
@@ -11,8 +11,7 @@ export default function Settings() {
   const [settings, setSettings] = useState(createDefaultSettings());
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [seeding, setSeeding] = useState(false);
-  const [seedConfirmOpen, setSeedConfirmOpen] = useState(false);
+
   const { addToast } = useToast();
 
   useEffect(() => {
@@ -44,19 +43,7 @@ export default function Settings() {
     }
   };
 
-  const handleSeedDatabase = async () => {
-    setSeedConfirmOpen(false);
-    setSeeding(true);
-    try {
-      const res = await seedAllDataToFirestore();
-      addToast(res.message || 'Database seeded successfully!', 'success', 5000);
-    } catch (err) {
-      console.error(err);
-      addToast('Database seeding failed: ' + err.message, 'error', 6000);
-    } finally {
-      setSeeding(false);
-    }
-  };
+
 
   return (
     <AdminLayout title="System Settings & Ecosystem Controls">
@@ -88,15 +75,6 @@ export default function Settings() {
             </div>
           </div>
 
-          <button
-            type="button"
-            className="btn btn-secondary btn-sm"
-            onClick={() => setSeedConfirmOpen(true)}
-            disabled={seeding}
-          >
-            <Sparkles size={14} color="#f59e0b" />
-            <span>{seeding ? 'Seeding Firestore...' : 'Seed Sample Ecosystem Data'}</span>
-          </button>
         </div>
 
         {/* Global Ecosystem URLs Panel */}
@@ -211,16 +189,7 @@ export default function Settings() {
         </div>
       </form>
 
-      {/* Database Seed Confirm Modal */}
-      <ConfirmModal
-        isOpen={seedConfirmOpen}
-        title="Seed Database with Sample Data"
-        message="This will populate Firestore with rich real-world projects (FarmFlow AI, CloudSentinel Hub, DevMetrics, Nexus Neural, PulseOps), skills categories, experience, education, and achievements. Continue?"
-        confirmText="Populate Database"
-        isDanger={false}
-        onConfirm={handleSeedDatabase}
-        onCancel={() => setSeedConfirmOpen(false)}
-      />
+
     </AdminLayout>
   );
 }
