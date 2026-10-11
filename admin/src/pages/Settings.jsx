@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Save, Settings as SettingsIcon, Database, ShieldAlert, CheckCircle2, RefreshCw, Sparkles, ExternalLink } from 'lucide-react';
+import { Save, Settings as SettingsIcon, Database, ShieldAlert, CheckCircle2, RefreshCw, Sparkles, ExternalLink, Rocket, Send } from 'lucide-react';
 import AdminLayout from '../components/AdminLayout';
 import ConfirmModal from '../components/ConfirmModal';
 import { useToast } from '../components/Toast';
@@ -11,6 +11,7 @@ export default function Settings() {
   const [settings, setSettings] = useState(createDefaultSettings());
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deployingService, setDeployingService] = useState(null);
 
   const { addToast } = useToast();
 
@@ -19,7 +20,7 @@ export default function Settings() {
       try {
         setLoading(true);
         const data = await getSettings();
-        if (data) setSettings(data);
+        if (data) setSettings({ ...createDefaultSettings(), ...data });
       } catch (err) {
         console.error(err);
       } finally {
@@ -40,6 +41,53 @@ export default function Settings() {
       addToast('Failed to save settings.', 'error');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleTriggerDeploy = async (hookUrl, serviceName) => {
+    const url = hookUrl || (
+      serviceName === 'Portfolio'
+        ? import.meta.env.VITE_RENDER_DEPLOY_HOOK_PORTFOLIO
+        : serviceName === 'Project Showcase'
+        ? import.meta.env.VITE_RENDER_DEPLOY_HOOK_SHOWCASE
+        : import.meta.env.VITE_RENDER_DEPLOY_HOOK_ADMIN
+    );
+
+    if (!url) {
+      addToast(`No deploy hook URL configured for ${serviceName}`, 'error');
+      return;
+    }
+
+    setDeployingService(serviceName);
+    try {
+      await fetch(url, { method: 'POST', mode: 'no-cors' });
+      addToast(`🚀 Deploy triggered for ${serviceName}! Check Render dashboard for progress.`, 'success');
+    } catch (err) {
+      addToast(`Failed to trigger deploy for ${serviceName}: ${err.message}`, 'error');
+    } finally {
+      setDeployingService(null);
+    }
+  };
+
+  const handleTriggerAllDeploys = async () => {
+    setDeployingService('all');
+    try {
+      const hooks = [
+        { url: settings.deployHookPortfolio || import.meta.env.VITE_RENDER_DEPLOY_HOOK_PORTFOLIO, name: 'Portfolio' },
+        { url: settings.deployHookShowcase || import.meta.env.VITE_RENDER_DEPLOY_HOOK_SHOWCASE, name: 'Project Showcase' },
+        { url: settings.deployHookAdmin || import.meta.env.VITE_RENDER_DEPLOY_HOOK_ADMIN, name: 'Admin CMS' }
+      ];
+
+      for (const h of hooks) {
+        if (h.url) {
+          await fetch(h.url, { method: 'POST', mode: 'no-cors' });
+        }
+      }
+      addToast('🚀 All 3 deployments triggered on Render! Check Render dashboard.', 'success');
+    } catch (err) {
+      addToast(`Failed to trigger all deployments: ${err.message}`, 'error');
+    } finally {
+      setDeployingService(null);
     }
   };
 
@@ -176,6 +224,116 @@ export default function Settings() {
                   />
                   <span>Maintenance Mode (Temporarily disables contact forms)</span>
                 </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Render Deploy Hooks & 1-Click Trigger Panel */}
+        <div className="panel-card" style={{ marginTop: '2rem' }}>
+          <div className="panel-header">
+            <div>
+              <div className="panel-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Rocket size={18} color="var(--primary, #3b82f6)" />
+                <span>Production Deployments (Render Deploy Hooks)</span>
+              </div>
+              <div className="panel-subtitle">
+                Trigger instant live redeploys on Render with one click, or update your webhook URLs
+              </div>
+            </div>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={handleTriggerAllDeploys}
+              disabled={deployingService !== null}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              <Send size={15} />
+              <span>{deployingService === 'all' ? 'Triggering...' : 'Deploy Entire Ecosystem'}</span>
+            </button>
+          </div>
+
+          <div className="panel-body">
+            <div className="form-grid">
+              {/* Portfolio Hook */}
+              <div className="form-group form-full">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                  <label className="form-label" htmlFor="set-hook-port" style={{ margin: 0 }}>
+                    Portfolio Deploy Hook (my-portfolio)
+                  </label>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline"
+                    onClick={() => handleTriggerDeploy(settings.deployHookPortfolio, 'Portfolio')}
+                    disabled={deployingService !== null}
+                    style={{ fontSize: '0.8rem', padding: '0.25rem 0.75rem' }}
+                  >
+                    {deployingService === 'Portfolio' ? 'Triggering...' : '🚀 Trigger Deploy'}
+                  </button>
+                </div>
+                <input
+                  id="set-hook-port"
+                  type="url"
+                  className="form-input"
+                  placeholder="https://api.render.com/deploy/srv-xxxx?key=yyyy"
+                  value={settings.deployHookPortfolio || ''}
+                  onChange={(e) => setSettings({ ...settings, deployHookPortfolio: e.target.value })}
+                />
+                <span className="form-hint">Webhook URL to build and deploy the Personal Portfolio on Render</span>
+              </div>
+
+              {/* Showcase Hook */}
+              <div className="form-group form-full">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                  <label className="form-label" htmlFor="set-hook-show" style={{ margin: 0 }}>
+                    Project Showcase Deploy Hook (my-showcase)
+                  </label>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline"
+                    onClick={() => handleTriggerDeploy(settings.deployHookShowcase, 'Project Showcase')}
+                    disabled={deployingService !== null}
+                    style={{ fontSize: '0.8rem', padding: '0.25rem 0.75rem' }}
+                  >
+                    {deployingService === 'Project Showcase' ? 'Triggering...' : '🚀 Trigger Deploy'}
+                  </button>
+                </div>
+                <input
+                  id="set-hook-show"
+                  type="url"
+                  className="form-input"
+                  placeholder="https://api.render.com/deploy/srv-xxxx?key=yyyy"
+                  value={settings.deployHookShowcase || ''}
+                  onChange={(e) => setSettings({ ...settings, deployHookShowcase: e.target.value })}
+                />
+                <span className="form-hint">Webhook URL to build and deploy the Project Showcase gallery on Render</span>
+              </div>
+
+              {/* Admin Hook */}
+              <div className="form-group form-full">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                  <label className="form-label" htmlFor="set-hook-adm" style={{ margin: 0 }}>
+                    Admin CMS Deploy Hook (my-admin)
+                  </label>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline"
+                    onClick={() => handleTriggerDeploy(settings.deployHookAdmin, 'Admin CMS')}
+                    disabled={deployingService !== null}
+                    style={{ fontSize: '0.8rem', padding: '0.25rem 0.75rem' }}
+                  >
+                    {deployingService === 'Admin CMS' ? 'Triggering...' : '🚀 Trigger Deploy'}
+                  </button>
+                </div>
+                <input
+                  id="set-hook-adm"
+                  type="url"
+                  className="form-input"
+                  placeholder="https://api.render.com/deploy/srv-xxxx?key=yyyy"
+                  value={settings.deployHookAdmin || ''}
+                  onChange={(e) => setSettings({ ...settings, deployHookAdmin: e.target.value })}
+                />
+                <span className="form-hint">Webhook URL to build and deploy the Admin CMS portal on Render</span>
               </div>
             </div>
           </div>

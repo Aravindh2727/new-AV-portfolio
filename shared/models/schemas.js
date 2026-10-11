@@ -129,5 +129,8 @@ export const createDefaultSettings = () => ({
   contactEmail: 'contact@example.com',
   footerText: '© 2026 Aravindh V. Engineered with modern React & Firebase.',
   metaDescription: 'Personal developer ecosystem showcasing engineering projects, skills, and experience.',
-  maintenanceMode: false
+  maintenanceMode: false,
+  deployHookPortfolio: 'https://api.render.com/deploy/srv-db5qhc3l550s73b2h2o0?key=dbNKn5ckvVY',
+  deployHookShowcase: 'https://api.render.com/deploy/srv-db5qoafavr4c739o9qf0?key=7Usx2xUf1NI',
+  deployHookAdmin: 'https://api.render.com/deploy/srv-db5r13g473hc73c43vj0?key=ofHb1sEzg3A'
 });

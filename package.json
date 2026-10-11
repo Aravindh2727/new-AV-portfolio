@@ -15,7 +15,11 @@
     "build:portfolio": "npm --workspace=portfolio run build",
     "build:showcase": "npm --workspace=project-showcase run build",
     "build:admin": "npm --workspace=admin run build",
-    "build:all": "npm run build:portfolio && npm run build:showcase && npm run build:admin"
+    "build:all": "npm run build:portfolio && npm run build:showcase && npm run build:admin",
+    "deploy:portfolio": "node scripts/trigger-deploy.js portfolio",
+    "deploy:showcase": "node scripts/trigger-deploy.js showcase",
+    "deploy:admin": "node scripts/trigger-deploy.js admin",
+    "deploy:all": "node scripts/trigger-deploy.js all"
   },
   "keywords": [
     "portfolio",

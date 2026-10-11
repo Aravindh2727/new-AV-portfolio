@@ -303,6 +303,16 @@ npm run build:admin        # outputs to admin/dist
 npm run build:all
 ```
 
+### Render Deployment (Deploy Hooks):
+Trigger live Render redeployments anytime from the command line:
+```bash
+npm run deploy:portfolio   # Triggers my-portfolio deploy hook
+npm run deploy:showcase    # Triggers my-showcase deploy hook
+npm run deploy:admin       # Triggers my-admin deploy hook
+npm run deploy:all         # Triggers all three services sequentially
+```
+* Deploy hooks can also be triggered directly with one click in the **Admin CMS $\rightarrow$ System Settings $\rightarrow$ Production Deployments**.
+
 ### Vercel / Netlify Configuration:
 * **Root Directory**: `portfolio` / `project-showcase` / `admin`
 * **Build Command**: `npm run build`
