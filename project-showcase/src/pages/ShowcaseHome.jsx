@@ -354,7 +354,7 @@ export default function ShowcaseHome({ projects, profile, settings }) {
 
                   {/* Footer Actions */}
                   <div className="gallery-card-footer">
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                       {proj.liveUrl && (
                         <a
                           href={proj.liveUrl}
@@ -368,6 +368,21 @@ export default function ShowcaseHome({ projects, profile, settings }) {
                           <ExternalLink size={11} style={{ display: 'inline', marginLeft: '3px' }} />
                         </a>
                       )}
+
+                      {proj.portalLinks && proj.portalLinks.map((portal, pIdx) => portal.url && (
+                        <a
+                          key={pIdx}
+                          href={portal.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="cat-tab-btn"
+                          style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem' }}
+                          title={portal.label || 'Open Portal'}
+                        >
+                          <span>{portal.label || 'Portal'}</span>
+                          <ExternalLink size={11} style={{ display: 'inline', marginLeft: '3px' }} />
+                        </a>
+                      ))}
 
                       {proj.githubUrl && (
                         <a

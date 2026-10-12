@@ -12,7 +12,9 @@ import {
   X,
   Image as ImageIcon,
   ArrowUpDown,
-  Filter
+  Filter,
+  Globe,
+  Link as LinkIcon
 } from 'lucide-react';
 import AdminLayout from '../components/AdminLayout';
 import ConfirmModal from '../components/ConfirmModal';
@@ -67,6 +69,7 @@ export default function Projects() {
   const handleOpenCreate = () => {
     const fresh = createDefaultProject();
     fresh.displayOrder = projects.length + 1;
+    fresh.portalLinks = [];
     setCurrentProject(fresh);
     setTechInput('');
     setFeaturesInput('');
@@ -76,12 +79,37 @@ export default function Projects() {
   };
 
   const handleOpenEdit = (proj) => {
-    setCurrentProject({ ...proj });
+    setCurrentProject({
+      ...proj,
+      portalLinks: Array.isArray(proj.portalLinks) ? [...proj.portalLinks] : []
+    });
     setTechInput(joinStringArray(proj.technologies || []));
     setFeaturesInput(Array.isArray(proj.features) ? proj.features.join('\n') : '');
     setScreenshotsInput(joinStringArray(proj.screenshots || [], '\n'));
     setIsEditing(true);
     setIsModalOpen(true);
+  };
+
+  const addPortalLink = () => {
+    setCurrentProject((prev) => ({
+      ...prev,
+      portalLinks: [...(prev.portalLinks || []), { label: '', url: '' }]
+    }));
+  };
+
+  const removePortalLink = (index) => {
+    setCurrentProject((prev) => ({
+      ...prev,
+      portalLinks: (prev.portalLinks || []).filter((_, i) => i !== index)
+    }));
+  };
+
+  const updatePortalLink = (index, field, value) => {
+    setCurrentProject((prev) => {
+      const nextLinks = [...(prev.portalLinks || [])];
+      nextLinks[index] = { ...nextLinks[index], [field]: value };
+      return { ...prev, portalLinks: nextLinks };
+    });
   };
 
   const handleTitleChange = (e) => {
@@ -107,8 +135,16 @@ export default function Projects() {
 
     setSaving(true);
     try {
+      const cleanedPortalLinks = (currentProject.portalLinks || [])
+        .filter((l) => l && (l.url?.trim() || l.label?.trim()))
+        .map((l) => ({
+          label: l.label?.trim() || 'Live Portal',
+          url: l.url?.trim() || ''
+        }));
+
       const payload = {
         ...currentProject,
+        portalLinks: cleanedPortalLinks,
         technologies: parseStringArray(techInput),
         features: featuresInput
           .split('\n')
@@ -564,6 +600,90 @@ export default function Projects() {
                       value={currentProject.videoUrl}
                       onChange={(e) => setCurrentProject({ ...currentProject, videoUrl: e.target.value })}
                     />
+                  </div>
+
+                  {/* Dynamic Portals & Additional Live URLs */}
+                  <div className="form-group form-full" style={{ marginTop: '0.5rem', marginBottom: '0.75rem', padding: '1.25rem', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', background: 'var(--bg-tertiary)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      <div>
+                        <label className="form-label" style={{ margin: 0, fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.95rem', color: 'var(--text-main)' }}>
+                          <Globe size={16} color="#38bdf8" />
+                          <span>Multiple Portals & Extra Live URLs</span>
+                        </label>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                          Add extra live links (e.g. Admin Portal, Client Web App, Documentation, Sub-services)
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={addPortalLink}
+                        className="btn btn-secondary btn-sm"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                      >
+                        <Plus size={14} />
+                        <span>Add Portal Link</span>
+                      </button>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                      {(currentProject.portalLinks || []).map((portal, idx) => (
+                        <div
+                          key={idx}
+                          style={{
+                            display: 'flex',
+                            gap: '0.75rem',
+                            alignItems: 'center',
+                            flexWrap: 'wrap',
+                            padding: '0.75rem',
+                            border: '1px solid var(--border-color)',
+                            borderRadius: 'var(--radius-sm)',
+                            background: 'var(--bg-card)'
+                          }}
+                        >
+                          <div style={{ flex: '1 1 180px', minWidth: '130px' }}>
+                            <input
+                              type="text"
+                              className="form-input"
+                              placeholder="Label (e.g. Admin Portal)"
+                              value={portal.label || ''}
+                              onChange={(e) => updatePortalLink(idx, 'label', e.target.value)}
+                            />
+                          </div>
+                          <div style={{ flex: '2 1 260px', minWidth: '200px' }}>
+                            <input
+                              type="url"
+                              className="form-input"
+                              placeholder="URL (https://admin.example.com)"
+                              value={portal.url || ''}
+                              onChange={(e) => updatePortalLink(idx, 'url', e.target.value)}
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            className="btn-icon danger"
+                            onClick={() => removePortalLink(idx)}
+                            title="Remove portal link"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      ))}
+
+                      {(!currentProject.portalLinks || currentProject.portalLinks.length === 0) && (
+                        <div
+                          style={{
+                            textAlign: 'center',
+                            color: 'var(--text-muted)',
+                            padding: '1rem',
+                            border: '1px dashed var(--border-color)',
+                            borderRadius: 'var(--radius-sm)',
+                            fontSize: '0.85rem'
+                          }}
+                        >
+                          Have multiple portals for this project? Click <strong>+ Add Portal Link</strong> above to add them.
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <div className="form-group">

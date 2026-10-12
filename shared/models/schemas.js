@@ -42,6 +42,7 @@ export const createDefaultProject = () => ({
   liveUrl: '',
   demoUrl: '',
   videoUrl: '',
+  portalLinks: [],
   featured: false,
   published: true,
   displayOrder: 1,

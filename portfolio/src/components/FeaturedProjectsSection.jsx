@@ -81,7 +81,7 @@ export default function FeaturedProjectsSection({ projects, settings }) {
 
                     {/* Action Links */}
                     <div className="project-card-actions">
-                      <div style={{ display: 'flex', gap: '0.6rem' }}>
+                      <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
                         {proj.liveUrl && (
                           <a
                             href={proj.liveUrl}
@@ -95,6 +95,21 @@ export default function FeaturedProjectsSection({ projects, settings }) {
                             <ExternalLink size={12} />
                           </a>
                         )}
+
+                        {proj.portalLinks && proj.portalLinks.map((portal, pIdx) => portal.url && (
+                          <a
+                            key={pIdx}
+                            href={portal.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="btn-secondary"
+                            style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}
+                            title={portal.label || 'Open Portal'}
+                          >
+                            <span>{portal.label || 'Portal'}</span>
+                            <ExternalLink size={12} />
+                          </a>
+                        ))}
 
                         {proj.githubUrl && (
                           <a

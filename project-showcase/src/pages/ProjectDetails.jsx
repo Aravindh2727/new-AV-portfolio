@@ -131,6 +131,21 @@ export default function ProjectDetails({ profile, settings }) {
               </a>
             )}
 
+            {project.portalLinks && project.portalLinks.map((portal, pIdx) => portal.url && (
+              <a
+                key={pIdx}
+                href={portal.url}
+                target="_blank"
+                rel="noreferrer"
+                className="cat-tab-btn active"
+                style={{ padding: '0.65rem 1.25rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+                title={portal.label || 'Portal'}
+              >
+                <span>{portal.label || 'Portal'}</span>
+                <ExternalLink size={14} />
+              </a>
+            ))}
+
             {project.githubUrl && (
               <a
                 href={project.githubUrl}
