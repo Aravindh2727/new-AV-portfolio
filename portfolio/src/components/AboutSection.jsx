@@ -4,12 +4,13 @@ import { User, MapPin, Award, CheckCircle, Zap } from 'lucide-react';
 export default function AboutSection({ profile }) {
   if (!profile) return null;
 
-  const stats = profile.stats || {
-    yearsExperience: '3+',
-    projectsCompleted: '15+',
-    technologiesMastered: '22+',
-    contributions: '650+'
-  };
+  const stats = profile.stats || {};
+  const hasStats = Boolean(
+    stats.yearsExperience ||
+    stats.projectsCompleted ||
+    stats.technologiesMastered ||
+    stats.contributions
+  );
 
   return (
     <section className="section" id="about">
@@ -26,15 +27,16 @@ export default function AboutSection({ profile }) {
         </div>
 
         <div className="about-card">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '2rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: hasStats ? 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))' : '1fr', gap: '2rem' }}>
             <div>
               <h3 style={{ fontSize: '1.35rem', fontWeight: 800, marginBottom: '1rem', color: 'var(--text-primary)' }}>
                 Engineering from First Principles
               </h3>
-              <p style={{ color: 'var(--text-secondary)', lineHeight: '1.8', fontSize: '1.025rem', marginBottom: '1.5rem', whiteSpace: 'pre-line' }}>
-                {profile.about ||
-                  'I am a passionate software engineer specializing in modern React ecosystems, resilient cloud architectures, and practical machine learning solutions.'}
-              </p>
+              {profile.about && (
+                <p style={{ color: 'var(--text-secondary)', lineHeight: '1.8', fontSize: '1.025rem', marginBottom: '1.5rem', whiteSpace: 'pre-line' }}>
+                  {profile.about}
+                </p>
+              )}
 
               {profile.location && (
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: '#60a5fa', fontSize: '0.9rem', fontWeight: 600 }}>
@@ -45,26 +47,36 @@ export default function AboutSection({ profile }) {
             </div>
 
             {/* Metrics & Highlights */}
-            <div>
-              <div className="stats-grid" style={{ marginTop: 0 }}>
-                <div className="stat-box">
-                  <div className="stat-number">{stats.yearsExperience || '3+'}</div>
-                  <div className="stat-label">Years Experience</div>
-                </div>
-                <div className="stat-box">
-                  <div className="stat-number">{stats.projectsCompleted || '15+'}</div>
-                  <div className="stat-label">Production Projects</div>
-                </div>
-                <div className="stat-box">
-                  <div className="stat-number">{stats.technologiesMastered || '20+'}</div>
-                  <div className="stat-label">Tech Stack Tools</div>
-                </div>
-                <div className="stat-box">
-                  <div className="stat-number">{stats.contributions || '600+'}</div>
-                  <div className="stat-label">Git Contributions</div>
+            {hasStats && (
+              <div>
+                <div className="stats-grid" style={{ marginTop: 0 }}>
+                  {stats.yearsExperience && (
+                    <div className="stat-box">
+                      <div className="stat-number">{stats.yearsExperience}</div>
+                      <div className="stat-label">Years Experience</div>
+                    </div>
+                  )}
+                  {stats.projectsCompleted && (
+                    <div className="stat-box">
+                      <div className="stat-number">{stats.projectsCompleted}</div>
+                      <div className="stat-label">Production Projects</div>
+                    </div>
+                  )}
+                  {stats.technologiesMastered && (
+                    <div className="stat-box">
+                      <div className="stat-number">{stats.technologiesMastered}</div>
+                      <div className="stat-label">Tech Stack Tools</div>
+                    </div>
+                  )}
+                  {stats.contributions && (
+                    <div className="stat-box">
+                      <div className="stat-number">{stats.contributions}</div>
+                      <div className="stat-label">Git Contributions</div>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

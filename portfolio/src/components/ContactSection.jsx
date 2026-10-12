@@ -76,49 +76,72 @@ export default function ContactSection({ profile, settings }) {
               I am typically responsive within 24 hours. Feel free to send an inquiry or message directly through email or professional networks.
             </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              {profile?.email && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <div style={{ width: 42, height: 42, borderRadius: 10, background: 'rgba(99, 102, 241, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#818cf8' }}>
-                    <Mail size={18} />
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Email</div>
-                    <a href={`mailto:${profile.email}`} style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '0.95rem' }}>
-                      {profile.email}
-                    </a>
-                  </div>
-                </div>
-              )}
+            {(() => {
+              const displayEmail = (profile?.email && !profile.email.includes('example.com'))
+                ? profile.email
+                : (settings?.contactEmail && !settings.contactEmail.includes('example.com'))
+                  ? settings.contactEmail
+                  : '';
+              const displayPhone = (profile?.phone && !profile.phone.includes('98765'))
+                ? profile.phone
+                : '';
+              const displayLocation = (profile?.location || '').trim();
 
-              {profile?.phone && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <div style={{ width: 42, height: 42, borderRadius: 10, background: 'rgba(16, 185, 129, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#34d399' }}>
-                    <Phone size={18} />
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Phone</div>
-                    <span style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '0.95rem' }}>
-                      {profile.phone}
-                    </span>
-                  </div>
-                </div>
-              )}
+              return (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                  {displayEmail && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <div style={{ width: 42, height: 42, borderRadius: 10, background: 'rgba(99, 102, 241, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#818cf8' }}>
+                        <Mail size={18} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Email</div>
+                        <a
+                          href={`mailto:${displayEmail}`}
+                          style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '0.95rem' }}
+                        >
+                          {displayEmail}
+                        </a>
+                      </div>
+                    </div>
+                  )}
 
-              {profile?.location && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <div style={{ width: 42, height: 42, borderRadius: 10, background: 'rgba(6, 182, 212, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#06b6d4' }}>
-                    <MapPin size={18} />
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Location</div>
-                    <span style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '0.95rem' }}>
-                      {profile.location}
-                    </span>
-                  </div>
+                  {displayPhone && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <div style={{ width: 42, height: 42, borderRadius: 10, background: 'rgba(16, 185, 129, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#34d399' }}>
+                        <Phone size={18} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Phone</div>
+                        <span style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '0.95rem' }}>
+                          {displayPhone}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {displayLocation && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <div style={{ width: 42, height: 42, borderRadius: 10, background: 'rgba(6, 182, 212, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#06b6d4' }}>
+                        <MapPin size={18} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Location</div>
+                        <span style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '0.95rem' }}>
+                          {displayLocation}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {!displayEmail && !displayPhone && !displayLocation && (
+                    <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontStyle: 'italic' }}>
+                      Send an inquiry using the direct messaging form on the right.
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              );
+            })()}
           </div>
 
           {/* Right Form column */}

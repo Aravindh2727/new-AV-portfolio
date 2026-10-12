@@ -53,15 +53,18 @@ export default function Hero({ profile }) {
               <span className="hero-title-accent">{profile.name || 'Aravindh V'}</span>
             </h1>
 
-            <div className="hero-role">
-              {profile.title || 'Full Stack & AI/ML Engineer'}
-            </div>
+            {profile.title && (
+              <div className="hero-role">
+                {profile.title}
+              </div>
+            )}
 
             {/* Bio */}
-            <p className="hero-bio">
-              {profile.shortBio ||
-                'Building intelligent, scalable full-stack applications and high-performance developer systems.'}
-            </p>
+            {profile.shortBio && (
+              <p className="hero-bio">
+                {profile.shortBio}
+              </p>
+            )}
 
             {/* Hero Tags */}
             {profile.heroTags && profile.heroTags.length > 0 && (

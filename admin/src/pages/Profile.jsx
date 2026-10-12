@@ -228,6 +228,79 @@ export default function Profile() {
           </div>
         </div>
 
+        {/* Career & Stats Panel */}
+        <div className="panel-card">
+          <div className="panel-header">
+            <div>
+              <div className="panel-title">Career Highlights & Impact Metrics</div>
+              <div className="panel-subtitle">Key quantitative metrics showcased dynamically in the About section</div>
+            </div>
+          </div>
+          <div className="panel-body">
+            <div className="form-grid">
+              <div className="form-group">
+                <label className="form-label" htmlFor="stat-years">Years of Experience</label>
+                <input
+                  id="stat-years"
+                  type="text"
+                  className="form-input"
+                  placeholder="e.g. 2+ or 3+"
+                  value={profile.stats?.yearsExperience || ''}
+                  onChange={(e) => setProfile({
+                    ...profile,
+                    stats: { ...(profile.stats || {}), yearsExperience: e.target.value }
+                  })}
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label" htmlFor="stat-projects">Production Projects</label>
+                <input
+                  id="stat-projects"
+                  type="text"
+                  className="form-input"
+                  placeholder="e.g. 15+"
+                  value={profile.stats?.projectsCompleted || ''}
+                  onChange={(e) => setProfile({
+                    ...profile,
+                    stats: { ...(profile.stats || {}), projectsCompleted: e.target.value }
+                  })}
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label" htmlFor="stat-tech">Technologies Mastered</label>
+                <input
+                  id="stat-tech"
+                  type="text"
+                  className="form-input"
+                  placeholder="e.g. 20+"
+                  value={profile.stats?.technologiesMastered || ''}
+                  onChange={(e) => setProfile({
+                    ...profile,
+                    stats: { ...(profile.stats || {}), technologiesMastered: e.target.value }
+                  })}
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label" htmlFor="stat-contrib">Git Contributions</label>
+                <input
+                  id="stat-contrib"
+                  type="text"
+                  className="form-input"
+                  placeholder="e.g. 500+"
+                  value={profile.stats?.contributions || ''}
+                  onChange={(e) => setProfile({
+                    ...profile,
+                    stats: { ...(profile.stats || {}), contributions: e.target.value }
+                  })}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Links & Socials Panel */}
         <div className="panel-card">
           <div className="panel-header">

@@ -340,9 +340,11 @@ export default function ProjectDetails({ profile, settings }) {
                   <div style={{ fontWeight: 800, color: 'var(--text-pure)', fontSize: '0.95rem' }}>
                     {profile?.name || 'Aravindh V'}
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    {profile?.title || 'Full Stack & AI Engineer'}
-                  </div>
+                  {profile?.title && (
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                      {profile.title}
+                    </div>
+                  )}
                 </div>
               </div>
               <p style={{ fontSize: '0.825rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '1rem' }}>

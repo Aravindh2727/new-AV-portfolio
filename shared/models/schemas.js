@@ -4,29 +4,24 @@
 
 export const createDefaultProfile = () => ({
   name: 'Aravindh V',
-  title: 'Full Stack & AI/ML Engineer',
-  shortBio: 'Building intelligent, scalable full-stack applications and high-performance developer systems.',
-  about: 'I am a passionate software engineer specializing in modern React ecosystems, resilient cloud architectures, and practical machine learning solutions. With a focus on elegant UI/UX and rock-solid system design, I create web applications that solve real-world problems.',
-  location: 'Tamil Nadu, India',
-  email: 'aravindh@example.com',
-  phone: '+91 98765 43210',
+  title: '',
+  shortBio: '',
+  about: '',
+  location: '',
+  email: '',
+  phone: '',
   profileImage: '/avatar.jpg',
-  resumeUrl: 'https://example.com/resume.pdf',
-  socialLinks: [
-    { platform: 'GitHub', url: 'https://github.com' },
-    { platform: 'LinkedIn', url: 'https://linkedin.com' },
-    { platform: 'LeetCode', url: 'https://leetcode.com' },
-    { platform: 'HackerRank', url: 'https://hackerrank.com' }
-  ],
-  portfolioUrl: 'http://localhost:5173',
-  showcaseUrl: 'http://localhost:5174',
+  resumeUrl: '',
+  socialLinks: [],
+  portfolioUrl: '',
+  showcaseUrl: '',
   availabilityStatus: 'Open to Opportunities',
-  heroTags: ['Full Stack Developer', 'AI Solutions Architect', 'React & Cloud Enthusiast'],
+  heroTags: [],
   stats: {
-    yearsExperience: '2+',
-    projectsCompleted: '15+',
-    technologiesMastered: '20+',
-    contributions: '500+'
+    yearsExperience: '',
+    projectsCompleted: '',
+    technologiesMastered: '',
+    contributions: ''
   },
   updatedAt: new Date().toISOString()
 });
@@ -126,7 +121,7 @@ export const createDefaultSettings = () => ({
   portfolioUrl: 'http://localhost:5173',
   showcaseUrl: 'http://localhost:5174',
   adminUrl: 'http://localhost:5175',
-  contactEmail: 'contact@example.com',
+  contactEmail: '',
   footerText: '© 2026 Aravindh V. Engineered with modern React & Firebase.',
   metaDescription: 'Personal developer ecosystem showcasing engineering projects, skills, and experience.',
   maintenanceMode: false,
