@@ -4,6 +4,44 @@ import { Eye, Download, ExternalLink, X, FileText, Loader2, RefreshCw } from 'lu
 export default function ResumeModal({ isOpen, onClose, resumeUrl, name = 'Aravindh V' }) {
   const [loading, setLoading] = useState(true);
   const [useGoogleViewer, setUseGoogleViewer] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownloadResume = async (e) => {
+    if (e) e.preventDefault();
+    if (!resumeUrl || isDownloading) return;
+
+    setIsDownloading(true);
+    const fileName = `${(name || 'Aravindh_V').replace(/\s+/g, '_')}_Resume.pdf`;
+
+    try {
+      const response = await fetch(resumeUrl);
+      if (!response.ok) throw new Error('Fetch failed');
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 1500);
+    } catch (err) {
+      console.warn('Direct blob download fallback to attachment URL:', err);
+      let downloadUrl = resumeUrl;
+      if (downloadUrl.includes('cloudinary.com') && downloadUrl.includes('/upload/')) {
+        const cleanBase = fileName.replace(/\.[^/.]+$/, '');
+        downloadUrl = downloadUrl.replace('/upload/', `/upload/fl_attachment:${encodeURIComponent(cleanBase)}/`);
+      }
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   // Close on Escape key and lock body scroll when modal is active
   useEffect(() => {
@@ -93,17 +131,20 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl, name = 'Aravin
             </a>
 
             {/* Direct Download */}
-            <a
-              href={resumeUrl}
-              download
-              target="_blank"
-              rel="noreferrer"
+            <button
+              type="button"
+              onClick={handleDownloadResume}
               className="resume-action-btn primary"
               title="Download Resume PDF"
+              disabled={isDownloading}
             >
-              <Download size={14} />
-              <span>Download PDF</span>
-            </a>
+              {isDownloading ? (
+                <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} />
+              ) : (
+                <Download size={14} />
+              )}
+              <span>{isDownloading ? 'Downloading...' : 'Download PDF'}</span>
+            </button>
 
             {/* Close Button */}
             <button

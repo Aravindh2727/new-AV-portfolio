@@ -4,6 +4,7 @@ import {
   Download,
   Mail,
   Eye,
+  Loader2,
   Github,
   Linkedin,
   Code2,
@@ -33,6 +34,44 @@ const getSocialIcon = (platform = '', size = 18) => {
 
 export default function Hero({ profile }) {
   const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownloadResume = async (e) => {
+    if (e) e.preventDefault();
+    if (!profile?.resumeUrl || isDownloading) return;
+
+    setIsDownloading(true);
+    const fileName = `${(profile.name || 'Aravindh_V').replace(/\s+/g, '_')}_Resume.pdf`;
+
+    try {
+      const response = await fetch(profile.resumeUrl);
+      if (!response.ok) throw new Error('Fetch failed');
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 1500);
+    } catch (err) {
+      console.warn('Direct blob download fallback to attachment URL:', err);
+      let downloadUrl = profile.resumeUrl;
+      if (downloadUrl.includes('cloudinary.com') && downloadUrl.includes('/upload/')) {
+        const cleanBase = fileName.replace(/\.[^/.]+$/, '');
+        downloadUrl = downloadUrl.replace('/upload/', `/upload/fl_attachment:${encodeURIComponent(cleanBase)}/`);
+      }
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   if (!profile) return null;
 
@@ -102,17 +141,20 @@ export default function Hero({ profile }) {
                     <span>Preview Resume</span>
                   </button>
 
-                  <a
-                    href={profile.resumeUrl}
-                    target="_blank"
-                    rel="noreferrer"
+                  <button
+                    type="button"
+                    onClick={handleDownloadResume}
                     className="btn-secondary btn-resume-download"
                     title="Download Resume PDF"
                     id="hero-download-resume-btn"
-                    download
+                    disabled={isDownloading}
                   >
-                    <Download size={16} />
-                  </a>
+                    {isDownloading ? (
+                      <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />
+                    ) : (
+                      <Download size={16} />
+                    )}
+                  </button>
                 </div>
               )}
             </div>
