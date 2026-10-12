@@ -7,7 +7,7 @@ import ThemeToggle from '@shared/theme/ThemeToggle';
 const DEFAULT_ADMIN_EMAIL = 'aravindhvinayagam2007@gmail.com';
 
 const normalizeEmail = (val) => {
-  if (!val) return DEFAULT_ADMIN_EMAIL;
+  if (!val) return '';
   const trimmed = val.trim();
   if (trimmed === 'aravindhvinayagam2007gmail.com') {
     return 'aravindhvinayagam2007@gmail.com';
@@ -16,7 +16,7 @@ const normalizeEmail = (val) => {
 };
 
 export default function Login() {
-  const [email, setEmail] = useState(DEFAULT_ADMIN_EMAIL);
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -50,7 +50,7 @@ export default function Login() {
     setErrorMsg('');
     setResetMsg('');
     setLoading(true);
-    const targetEmail = normalizeEmail(email);
+    const targetEmail = normalizeEmail(email) || DEFAULT_ADMIN_EMAIL;
     try {
       await resetPassword(targetEmail);
       setResetMsg(`Password reset link successfully sent to ${targetEmail}.`);
