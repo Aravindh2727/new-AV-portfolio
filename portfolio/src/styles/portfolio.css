@@ -99,9 +99,14 @@ body {
   scrollbar-color: rgba(99, 102, 241, 0.45) #080a10;
 }
 
-[data-theme="light"] html,
-[data-theme="light"] body {
+html[data-theme="light"],
+html[data-theme="light"] body {
   scrollbar-color: rgba(79, 70, 229, 0.4) #f8fafc;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  scrollbar-color: rgba(99, 102, 241, 0.45) #080a10;
 }
 
 /* WebKit Scrollbar Styling (Chrome, Edge, Safari, Brave, Opera) */
@@ -111,17 +116,13 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #080a10;
-}
-
-[data-theme="light"] ::-webkit-scrollbar-track {
-  background: #f8fafc;
+  background: var(--bg-main, #080a10);
 }
 
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.2);
   border-radius: 9999px;
-  border: 2px solid #080a10;
+  border: 2px solid var(--bg-main, #080a10);
   transition: background 0.2s ease;
 }
 
@@ -130,16 +131,59 @@ body {
   box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
 }
 
-[data-theme="light"] ::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-corner {
+  background: var(--bg-main, #080a10);
+}
+
+/* Explicit Light Theme Scrollbar */
+html[data-theme="light"]::-webkit-scrollbar-track,
+body[data-theme="light"]::-webkit-scrollbar-track,
+html[data-theme="light"] ::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+
+html[data-theme="light"]::-webkit-scrollbar-thumb,
+body[data-theme="light"]::-webkit-scrollbar-thumb,
+html[data-theme="light"] ::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.22);
   border: 2px solid #f8fafc;
 }
 
-[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+html[data-theme="light"]::-webkit-scrollbar-thumb:hover,
+body[data-theme="light"]::-webkit-scrollbar-thumb:hover,
+html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
   background: var(--accent-indigo);
 }
 
-::-webkit-scrollbar-corner {
+html[data-theme="light"]::-webkit-scrollbar-corner,
+body[data-theme="light"]::-webkit-scrollbar-corner,
+html[data-theme="light"] ::-webkit-scrollbar-corner {
+  background: #f8fafc;
+}
+
+/* Explicit Dark Theme Scrollbar */
+html[data-theme="dark"]::-webkit-scrollbar-track,
+body[data-theme="dark"]::-webkit-scrollbar-track,
+html[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: #080a10;
+}
+
+html[data-theme="dark"]::-webkit-scrollbar-thumb,
+body[data-theme="dark"]::-webkit-scrollbar-thumb,
+html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid #080a10;
+}
+
+html[data-theme="dark"]::-webkit-scrollbar-thumb:hover,
+body[data-theme="dark"]::-webkit-scrollbar-thumb:hover,
+html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-indigo);
+}
+
+html[data-theme="dark"]::-webkit-scrollbar-corner,
+body[data-theme="dark"]::-webkit-scrollbar-corner,
+html[data-theme="dark"] ::-webkit-scrollbar-corner {
   background: #080a10;
 }
 

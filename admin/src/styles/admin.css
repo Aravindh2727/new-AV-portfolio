@@ -93,13 +93,20 @@ img {
   height: auto;
 }
 
-html {
+html,
+body {
   scrollbar-width: thin;
   scrollbar-color: rgba(59, 130, 246, 0.45) #0a0d14;
 }
 
-[data-theme="light"] html {
+html[data-theme="light"],
+html[data-theme="light"] body {
   scrollbar-color: rgba(37, 99, 235, 0.4) #f1f5f9;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  scrollbar-color: rgba(59, 130, 246, 0.45) #0a0d14;
 }
 
 ::-webkit-scrollbar {
@@ -108,13 +115,13 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-primary);
+  background: var(--bg-primary, #0a0d14);
 }
 
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.16);
   border-radius: 9999px;
-  border: 2px solid var(--bg-primary);
+  border: 2px solid var(--bg-primary, #0a0d14);
   transition: background 0.2s ease;
 }
 
@@ -123,17 +130,60 @@ html {
   box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
 }
 
-[data-theme="light"] ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border: 2px solid var(--bg-primary);
+::-webkit-scrollbar-corner {
+  background: var(--bg-primary, #0a0d14);
 }
 
-[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+/* Explicit Light Theme Scrollbar */
+html[data-theme="light"]::-webkit-scrollbar-track,
+body[data-theme="light"]::-webkit-scrollbar-track,
+html[data-theme="light"] ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+html[data-theme="light"]::-webkit-scrollbar-thumb,
+body[data-theme="light"]::-webkit-scrollbar-thumb,
+html[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px solid #f1f5f9;
+}
+
+html[data-theme="light"]::-webkit-scrollbar-thumb:hover,
+body[data-theme="light"]::-webkit-scrollbar-thumb:hover,
+html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
   background: var(--accent-blue);
 }
 
-::-webkit-scrollbar-corner {
-  background: var(--bg-primary);
+html[data-theme="light"]::-webkit-scrollbar-corner,
+body[data-theme="light"]::-webkit-scrollbar-corner,
+html[data-theme="light"] ::-webkit-scrollbar-corner {
+  background: #f1f5f9;
+}
+
+/* Explicit Dark Theme Scrollbar */
+html[data-theme="dark"]::-webkit-scrollbar-track,
+body[data-theme="dark"]::-webkit-scrollbar-track,
+html[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: #0a0d14;
+}
+
+html[data-theme="dark"]::-webkit-scrollbar-thumb,
+body[data-theme="dark"]::-webkit-scrollbar-thumb,
+html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border: 2px solid #0a0d14;
+}
+
+html[data-theme="dark"]::-webkit-scrollbar-thumb:hover,
+body[data-theme="dark"]::-webkit-scrollbar-thumb:hover,
+html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-blue);
+}
+
+html[data-theme="dark"]::-webkit-scrollbar-corner,
+body[data-theme="dark"]::-webkit-scrollbar-corner,
+html[data-theme="dark"] ::-webkit-scrollbar-corner {
+  background: #0a0d14;
 }
 
 body {
