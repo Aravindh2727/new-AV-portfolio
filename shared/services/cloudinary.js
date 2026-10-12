@@ -8,9 +8,11 @@ import app from '../firebase/config';
 
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || '';
 const API_KEY = import.meta.env.VITE_CLOUDINARY_API_KEY || '';
+const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || '';
 
 /**
  * Upload an image file securely to Cloudinary using Firebase Functions for signing
+ * (or direct unsigned upload if VITE_CLOUDINARY_UPLOAD_PRESET is configured)
  * @param {File|Blob} file The file to upload
  * @param {string} folder Target folder on Cloudinary (e.g. 'portfolio/projects')
  * @param {string} resourceType Resource type (e.g., 'auto', 'image', 'raw')
@@ -32,9 +34,9 @@ export async function uploadToCloudinary(file, folder = 'portfolio', resourceTyp
   }
 
   // Check if Cloudinary is configured
-  if (!CLOUD_NAME || !API_KEY) {
+  if (!CLOUD_NAME) {
     console.warn(
-      '[Cloudinary] Missing VITE_CLOUDINARY_CLOUD_NAME or VITE_CLOUDINARY_API_KEY in .env. Falling back to local data URL preview for development.'
+      '[Cloudinary] Missing VITE_CLOUDINARY_CLOUD_NAME in .env. Falling back to local preview for development.'
     );
     // Provide a development fallback using FileReader data URL
     return new Promise((resolve, reject) => {
@@ -50,9 +52,48 @@ export async function uploadToCloudinary(file, folder = 'portfolio', resourceTyp
     });
   }
 
+  // Option A: If an unsigned Upload Preset is configured, upload directly to Cloudinary
+  if (UPLOAD_PRESET) {
+    try {
+      const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`;
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', UPLOAD_PRESET);
+      if (folder) formData.append('folder', folder);
+
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.error?.message || `Cloudinary upload failed with status ${response.status}`
+        );
+      }
+
+      const result = await response.json();
+      return {
+        imageUrl: result.secure_url,
+        publicId: result.public_id
+      };
+    } catch (err) {
+      console.error('Direct Cloudinary preset upload failed:', err);
+      throw err;
+    }
+  }
+
+  // Option B: Signed upload using Firebase Cloud Function
+  if (!API_KEY) {
+    throw new Error(
+      'Missing VITE_CLOUDINARY_API_KEY. Configure VITE_CLOUDINARY_API_KEY or VITE_CLOUDINARY_UPLOAD_PRESET.'
+    );
+  }
+
   try {
-    // 1. Request signature from Firebase Cloud Functions
-    const functions = getFunctions(app);
+    // 1. Request signature from Firebase Cloud Functions (explicitly targeting us-central1)
+    const functions = getFunctions(app, 'us-central1');
     const getCloudinarySignature = httpsCallable(functions, 'getCloudinarySignature');
     
     // We send the desired folder so the server can validate and sign it.
@@ -93,6 +134,14 @@ export async function uploadToCloudinary(file, folder = 'portfolio', resourceTyp
     };
   } catch (error) {
     console.error('Error uploading to Cloudinary securely:', error);
+    
+    // Provide actionable diagnostic message for common Google Cloud Run / Firebase issues
+    if (error?.code === 'functions/internal' || error?.message?.includes('internal')) {
+      throw new Error(
+        'Cloud Function error: Preflight request failed. In Google Cloud Run Console, grant "Cloud Run Invoker" to "allUsers" for service "getcloudinarysignature", and ensure CLOUDINARY_API_SECRET is set in Secret Manager.'
+      );
+    }
+    
     throw error;
   }
 }

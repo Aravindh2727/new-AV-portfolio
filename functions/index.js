@@ -14,7 +14,10 @@ const ALLOWED_FOLDERS = [
 ];
 
 exports.getCloudinarySignature = onCall(
-  { secrets: [cloudinaryApiSecret] },
+  {
+    secrets: [cloudinaryApiSecret],
+    cors: true
+  },
   (request) => {
     // 1. Verify caller authentication (must be signed in to the CMS)
     if (!request.auth) {
@@ -27,7 +30,7 @@ exports.getCloudinarySignature = onCall(
     // Since this ecosystem has a single admin or trusted admins via Firebase Auth,
     // authentication is sufficient authorization according to existing rules.
 
-    const { folder = 'portfolio' } = request.data;
+    const { folder = 'portfolio' } = request.data || {};
 
     // 2. Validate folder parameter
     if (!ALLOWED_FOLDERS.includes(folder)) {
@@ -38,21 +41,34 @@ exports.getCloudinarySignature = onCall(
     }
 
     // 3. Generate signature
-    const timestamp = Math.round(new Date().getTime() / 1000);
+    try {
+      const secret = cloudinaryApiSecret.value();
+      if (!secret) {
+        throw new Error("CLOUDINARY_API_SECRET is empty or not configured in Firebase Secret Manager.");
+      }
 
-    const signature = cloudinary.utils.api_sign_request(
-      {
-        timestamp: timestamp,
-        folder: folder,
-      },
-      cloudinaryApiSecret.value()
-    );
+      const timestamp = Math.round(new Date().getTime() / 1000);
 
-    // 4. Return necessary parameters to the client
-    return {
-      signature,
-      timestamp,
-      folder
-    };
+      const signature = cloudinary.utils.api_sign_request(
+        {
+          timestamp: timestamp,
+          folder: folder,
+        },
+        secret
+      );
+
+      // 4. Return necessary parameters to the client
+      return {
+        signature,
+        timestamp,
+        folder
+      };
+    } catch (err) {
+      console.error("Failed to generate Cloudinary signature:", err);
+      throw new HttpsError(
+        "internal",
+        err.message || "Failed to generate Cloudinary upload signature."
+      );
+    }
   }
 );
