@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://av-project-showcase.onrender.com/sitemap.xml

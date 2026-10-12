@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 
 export default function FeaturedProjectsSection({ projects, settings }) {
-  const showcaseBaseUrl = settings?.showcaseUrl || import.meta.env.VITE_SHOWCASE_URL || 'http://localhost:5174';
+  const showcaseBaseUrl = settings?.showcaseUrl || import.meta.env.VITE_SHOWCASE_URL || 'https://av-project-showcase.onrender.com';
 
   // Strict filter: only published == true && featured == true
   const featuredList = (projects || []).filter(

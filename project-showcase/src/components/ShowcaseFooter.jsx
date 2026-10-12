@@ -2,7 +2,7 @@ import React from 'react';
 import { Github, Linkedin, ExternalLink, ArrowUp, User } from 'lucide-react';
 
 export default function ShowcaseFooter({ profile, settings }) {
-  const portfolioUrl = settings?.portfolioUrl || import.meta.env.VITE_PORTFOLIO_URL || 'http://localhost:5173';
+  const portfolioUrl = settings?.portfolioUrl || import.meta.env.VITE_PORTFOLIO_URL || 'https://av-portfolio-08j7.onrender.com';
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });

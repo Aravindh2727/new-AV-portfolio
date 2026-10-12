@@ -5,7 +5,7 @@ import ThemeToggle from '@shared/theme/ThemeToggle';
 export default function Navbar({ profile, settings }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const showcaseUrl = settings?.showcaseUrl || import.meta.env.VITE_SHOWCASE_URL || 'http://localhost:5174';
+  const showcaseUrl = settings?.showcaseUrl || import.meta.env.VITE_SHOWCASE_URL || 'https://av-project-showcase.onrender.com';
 
   const navItems = [
     { label: 'About', href: '#about' },

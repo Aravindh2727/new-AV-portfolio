@@ -2,7 +2,7 @@ import React from 'react';
 import { Github, Linkedin, Code2, Terminal, ArrowUp, FolderGit2 } from 'lucide-react';
 
 export default function Footer({ profile, settings }) {
-  const showcaseUrl = settings?.showcaseUrl || import.meta.env.VITE_SHOWCASE_URL || 'http://localhost:5174';
+  const showcaseUrl = settings?.showcaseUrl || import.meta.env.VITE_SHOWCASE_URL || 'https://av-project-showcase.onrender.com';
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });

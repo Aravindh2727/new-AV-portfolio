@@ -119,9 +119,9 @@ export const createDefaultContactMessage = () => ({
 });
 
 export const createDefaultSettings = () => ({
-  portfolioUrl: 'http://localhost:5173',
-  showcaseUrl: 'http://localhost:5174',
-  adminUrl: 'http://localhost:5175',
+  portfolioUrl: 'https://av-portfolio-08j7.onrender.com',
+  showcaseUrl: 'https://av-project-showcase.onrender.com',
+  adminUrl: 'https://av-admin-gml9.onrender.com',
   contactEmail: '',
   footerText: '© 2026 Aravindh V. Engineered with modern React & Firebase.',
   metaDescription: 'Personal developer ecosystem showcasing engineering projects, skills, and experience.',

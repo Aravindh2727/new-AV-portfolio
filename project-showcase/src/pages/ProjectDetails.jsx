@@ -27,7 +27,7 @@ export default function ProjectDetails({ profile, settings }) {
   const [loading, setLoading] = useState(true);
   const [activeLightboxImg, setActiveLightboxImg] = useState(null);
 
-  const portfolioUrl = settings?.portfolioUrl || import.meta.env.VITE_PORTFOLIO_URL || 'http://localhost:5173';
+  const portfolioUrl = settings?.portfolioUrl || import.meta.env.VITE_PORTFOLIO_URL || 'https://av-portfolio-08j7.onrender.com';
 
   useEffect(() => {
     async function loadData() {

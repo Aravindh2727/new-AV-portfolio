@@ -4,7 +4,7 @@ import { FolderGit2, ArrowLeft, ExternalLink, Sparkles, User, Mail, Menu, X } fr
 import ThemeToggle from '@shared/theme/ThemeToggle';
 
 export default function ShowcaseNavbar({ settings }) {
-  const portfolioUrl = settings?.portfolioUrl || import.meta.env.VITE_PORTFOLIO_URL || 'http://localhost:5173';
+  const portfolioUrl = settings?.portfolioUrl || import.meta.env.VITE_PORTFOLIO_URL || 'https://av-portfolio-08j7.onrender.com';
 
   return (
     <header className="showcase-navbar">

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://av-portfolio-08j7.onrender.com/sitemap.xml
