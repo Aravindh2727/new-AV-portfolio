@@ -1,2 +1,4 @@
 User-agent: *
-Disallow: /
+Allow: /
+
+Sitemap: https://av-admin-gml9.onrender.com/sitemap.xml
