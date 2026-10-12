@@ -10,7 +10,7 @@ export const createDefaultProfile = () => ({
   location: 'Tamil Nadu, India',
   email: 'aravindh@example.com',
   phone: '+91 98765 43210',
-  profileImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
+  profileImage: '/avatar.jpg',
   resumeUrl: 'https://example.com/resume.pdf',
   socialLinks: [
     { platform: 'GitHub', url: 'https://github.com' },

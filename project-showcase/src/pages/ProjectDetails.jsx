@@ -321,9 +321,20 @@ export default function ProjectDetails({ profile, settings }) {
               </h4>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
                 <img
-                  src={profile?.profileImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80'}
+                  src={
+                    profile?.profileImage &&
+                    !profile.profileImage.includes('unsplash.com') &&
+                    !profile.profileImage.includes('photo-1507003211169') &&
+                    !profile.profileImage.includes('photo-1534528741775')
+                      ? profile.profileImage
+                      : '/avatar.jpg'
+                  }
                   alt={profile?.name || 'Aravindh'}
                   style={{ width: 44, height: 44, borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--border-tech)' }}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/avatar.jpg';
+                  }}
                 />
                 <div>
                   <div style={{ fontWeight: 800, color: 'var(--text-pure)', fontSize: '0.95rem' }}>

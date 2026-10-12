@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ArrowRight,
   Download,
   Mail,
+  Eye,
   Github,
   Linkedin,
   Code2,
@@ -15,6 +16,7 @@ import {
   Facebook,
   Globe
 } from 'lucide-react';
+import ResumeModal from './ResumeModal';
 
 const getSocialIcon = (platform = '', size = 18) => {
   const p = platform.toLowerCase();
@@ -30,6 +32,8 @@ const getSocialIcon = (platform = '', size = 18) => {
 };
 
 export default function Hero({ profile }) {
+  const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
+
   if (!profile) return null;
 
   return (
@@ -83,16 +87,30 @@ export default function Hero({ profile }) {
               </a>
 
               {profile.resumeUrl && (
-                <a
-                  href={profile.resumeUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="btn-secondary"
-                  title="Download Resume / CV"
-                >
-                  <Download size={16} />
-                  <span>Resume</span>
-                </a>
+                <div className="resume-btn-group">
+                  <button
+                    type="button"
+                    onClick={() => setIsResumeModalOpen(true)}
+                    className="btn-secondary btn-resume-preview"
+                    title="Preview Resume in modal"
+                    id="hero-preview-resume-btn"
+                  >
+                    <Eye size={16} />
+                    <span>Preview Resume</span>
+                  </button>
+
+                  <a
+                    href={profile.resumeUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn-secondary btn-resume-download"
+                    title="Download Resume PDF"
+                    id="hero-download-resume-btn"
+                    download
+                  >
+                    <Download size={16} />
+                  </a>
+                </div>
               )}
             </div>
 
@@ -117,18 +135,35 @@ export default function Hero({ profile }) {
           <div className="hero-avatar-card">
             <div className="avatar-frame">
               <img
-                src={profile.profileImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80'}
+                src={
+                  profile.profileImage &&
+                  !profile.profileImage.includes('unsplash.com') &&
+                  !profile.profileImage.includes('photo-1507003211169') &&
+                  !profile.profileImage.includes('photo-1534528741775')
+                    ? profile.profileImage
+                    : '/avatar.jpg'
+                }
                 alt={profile.name || 'Developer Avatar'}
                 className="avatar-img"
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80';
+                  e.target.src = '/avatar.jpg';
                 }}
               />
             </div>
           </div>
         </div>
       </div>
+
+      {/* Resume Preview Modal */}
+      {profile.resumeUrl && (
+        <ResumeModal
+          isOpen={isResumeModalOpen}
+          onClose={() => setIsResumeModalOpen(false)}
+          resumeUrl={profile.resumeUrl}
+          name={profile.name || 'Aravindh V'}
+        />
+      )}
     </section>
   );
 }
