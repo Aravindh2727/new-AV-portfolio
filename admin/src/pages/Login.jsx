@@ -4,8 +4,19 @@ import { Lock, Mail, ArrowRight, AlertCircle, Info, CheckCircle2 } from 'lucide-
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '@shared/theme/ThemeToggle';
 
+const DEFAULT_ADMIN_EMAIL = 'aravindhvinayagam2007@gmail.com';
+
+const normalizeEmail = (val) => {
+  if (!val) return DEFAULT_ADMIN_EMAIL;
+  const trimmed = val.trim();
+  if (trimmed === 'aravindhvinayagam2007gmail.com') {
+    return 'aravindhvinayagam2007@gmail.com';
+  }
+  return trimmed;
+};
+
 export default function Login() {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(DEFAULT_ADMIN_EMAIL);
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -17,14 +28,15 @@ export default function Login() {
     e.preventDefault();
     setErrorMsg('');
     setResetMsg('');
-    if (!email || !password) {
+    const targetEmail = normalizeEmail(email);
+    if (!targetEmail || !password) {
       setErrorMsg('Please enter both email and password.');
       return;
     }
 
     setLoading(true);
     try {
-      await login(email, password);
+      await login(targetEmail, password);
       navigate('/');
     } catch (err) {
       console.error(err);
@@ -38,9 +50,10 @@ export default function Login() {
     setErrorMsg('');
     setResetMsg('');
     setLoading(true);
+    const targetEmail = normalizeEmail(email);
     try {
-      await resetPassword();
-      setResetMsg('Password reset link successfully sent to aravindhvinayagam2007@gmail.com.');
+      await resetPassword(targetEmail);
+      setResetMsg(`Password reset link successfully sent to ${targetEmail}.`);
     } catch (err) {
       console.error(err);
       setErrorMsg(err.message || 'Failed to send reset email.');
@@ -161,7 +174,7 @@ export default function Login() {
                 type="email"
                 className="form-input"
                 style={{ paddingLeft: '2.4rem' }}
-                placeholder="admin@example.com"
+                placeholder="aravindhvinayagam2007@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required

@@ -53,9 +53,10 @@ export function AuthProvider({ children }) {
     setCurrentUser(null);
   };
 
-  const resetPassword = async () => {
+  const resetPassword = async (targetEmail) => {
+    const toEmail = targetEmail || 'aravindhvinayagam2007@gmail.com';
     if (isFirebaseConfigured()) {
-      await firebaseResetPassword('aravindhvinayagam2007@gmail.com');
+      await firebaseResetPassword(toEmail);
     } else {
       throw new Error('Firebase is not configured. Cannot reset password in local demo mode.');
     }
