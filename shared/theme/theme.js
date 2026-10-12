@@ -26,11 +26,7 @@ export function getInitialTheme() {
     console.warn('Error reading theme from localStorage:', e);
   }
 
-  // Check system preference
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-    return THEMES.LIGHT;
-  }
-
+  // Default to dark mode for developer ecosystem
   return THEMES.DARK;
 }
 
@@ -44,6 +40,7 @@ export function applyThemeToDocument(theme) {
   const validTheme = theme === THEMES.LIGHT ? THEMES.LIGHT : THEMES.DARK;
   document.documentElement.setAttribute('data-theme', validTheme);
   document.body.setAttribute('data-theme', validTheme);
+  document.documentElement.style.colorScheme = validTheme;
 
   // Set or remove the .dark-mode / .light-mode helper classes
   if (validTheme === THEMES.DARK) {

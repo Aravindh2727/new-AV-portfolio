@@ -5,6 +5,7 @@
 
 :root,
 [data-theme="dark"] {
+  color-scheme: dark;
   --bg-main: #080a10;
   --bg-surface: #0f131f;
   --bg-surface-elevated: #161c2e;
@@ -47,6 +48,7 @@
 }
 
 [data-theme="light"] {
+  color-scheme: light;
   --bg-main: #f8fafc;
   --bg-surface: #ffffff;
   --bg-surface-elevated: #f1f5f9;
@@ -90,8 +92,55 @@ img {
   height: auto;
 }
 
-html {
+html,
+body {
   scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(99, 102, 241, 0.45) #080a10;
+}
+
+[data-theme="light"] html,
+[data-theme="light"] body {
+  scrollbar-color: rgba(79, 70, 229, 0.4) #f8fafc;
+}
+
+/* WebKit Scrollbar Styling (Chrome, Edge, Safari, Brave, Opera) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #080a10;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+  border: 2px solid #080a10;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-indigo);
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.22);
+  border: 2px solid #f8fafc;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-indigo);
+}
+
+::-webkit-scrollbar-corner {
+  background: #080a10;
 }
 
 body {
