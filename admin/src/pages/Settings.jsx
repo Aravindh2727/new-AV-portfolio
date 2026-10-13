@@ -1,11 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { Save, Settings as SettingsIcon, Database, ShieldAlert, CheckCircle2, RefreshCw, Sparkles, ExternalLink, Rocket, Send } from 'lucide-react';
+import {
+  Save,
+  Settings as SettingsIcon,
+  Database,
+  ShieldAlert,
+  CheckCircle2,
+  RefreshCw,
+  Sparkles,
+  ExternalLink,
+  Rocket,
+  Send,
+  Layers,
+  Eye,
+  EyeOff,
+  User,
+  Code2,
+  Briefcase,
+  GraduationCap,
+  Award,
+  Trophy,
+  FolderGit2,
+  Mail,
+  Check
+} from 'lucide-react';
 import AdminLayout from '../components/AdminLayout';
 import ConfirmModal from '../components/ConfirmModal';
 import { useToast } from '../components/Toast';
 import { getSettings, updateSettings } from '@shared/firebase/queries';
 import { isFirebaseConfigured } from '@shared/firebase/config';
-import { createDefaultSettings } from '@shared/models/schemas';
+import { createDefaultSettings, createDefaultSectionVisibility } from '@shared/models/schemas';
 
 export default function Settings() {
   const [settings, setSettings] = useState(createDefaultSettings());
@@ -20,7 +43,16 @@ export default function Settings() {
       try {
         setLoading(true);
         const data = await getSettings();
-        if (data) setSettings({ ...createDefaultSettings(), ...data });
+        if (data) {
+          setSettings({
+            ...createDefaultSettings(),
+            ...data,
+            sections: {
+              ...createDefaultSectionVisibility(),
+              ...(data.sections || {})
+            }
+          });
+        }
       } catch (err) {
         console.error(err);
       } finally {
@@ -29,6 +61,98 @@ export default function Settings() {
     }
     load();
   }, []);
+
+  const SECTION_CONFIGS = [
+    {
+      key: 'hero',
+      label: 'Hero & Introduction Banner',
+      icon: User,
+      color: '#3b82f6',
+      description: 'Landing hero with avatar, title, bio summary, and CTA buttons.'
+    },
+    {
+      key: 'about',
+      label: 'About Me',
+      icon: User,
+      color: '#8b5cf6',
+      description: 'Full developer bio, career metrics, highlights, and story.'
+    },
+    {
+      key: 'skills',
+      label: 'Technical Skills',
+      icon: Code2,
+      color: '#06b6d4',
+      description: 'Categorized technical proficiencies, tools, and expertise levels.'
+    },
+    {
+      key: 'experience',
+      label: 'Work Experience',
+      icon: Briefcase,
+      color: '#10b981',
+      description: 'Career positions, company roles, timeline, and responsibilities.'
+    },
+    {
+      key: 'education',
+      label: 'Academic Education',
+      icon: GraduationCap,
+      color: '#a855f7',
+      description: 'Degrees, educational institutions, grades, and academic foundation.'
+    },
+    {
+      key: 'certifications',
+      label: 'Certifications',
+      icon: Award,
+      color: '#f59e0b',
+      description: 'Verified cloud, engineering, and architecture certifications.'
+    },
+    {
+      key: 'achievements',
+      label: 'Achievements & Awards',
+      icon: Trophy,
+      color: '#ec4899',
+      description: 'Hackathons, honors, competitions, and notable milestones.'
+    },
+    {
+      key: 'projects',
+      label: 'Featured Projects',
+      icon: FolderGit2,
+      color: '#6366f1',
+      description: 'Curated projects gallery cards with live links and details.'
+    },
+    {
+      key: 'contact',
+      label: 'Contact Inquiries Form',
+      icon: Mail,
+      color: '#14b8a6',
+      description: 'Direct inquiry submission form, email links, and social channels.'
+    }
+  ];
+
+  const handleToggleSection = (sectionKey) => {
+    const currentVal = settings.sections?.[sectionKey] !== false;
+    setSettings({
+      ...settings,
+      sections: {
+        ...(settings.sections || {}),
+        [sectionKey]: !currentVal
+      }
+    });
+  };
+
+  const handleSetAllSections = (enable) => {
+    const updated = {};
+    SECTION_CONFIGS.forEach((sec) => {
+      updated[sec.key] = enable;
+    });
+    setSettings({
+      ...settings,
+      sections: updated
+    });
+    addToast(
+      enable ? 'All portfolio sections set to ENABLED' : 'All portfolio sections set to DISABLED',
+      'info'
+    );
+  };
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -225,6 +349,95 @@ export default function Settings() {
                   <span>Maintenance Mode (Temporarily disables contact forms)</span>
                 </label>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Portfolio Section Visibility Controls Panel */}
+        <div className="panel-card" style={{ marginTop: '2rem' }}>
+          <div className="panel-header">
+            <div>
+              <div className="panel-title" style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
+                <Layers size={18} color="var(--accent-blue, #3b82f6)" />
+                <span>Portfolio Section Visibility Controls</span>
+              </div>
+              <div className="panel-subtitle">
+                Enable or disable individual sections on your public portfolio website with instant toggle switches
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                onClick={() => handleSetAllSections(true)}
+                title="Enable all sections on the public portfolio"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+              >
+                <Eye size={14} />
+                <span>Enable All</span>
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                onClick={() => handleSetAllSections(false)}
+                title="Disable all sections on the public portfolio"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+              >
+                <EyeOff size={14} />
+                <span>Disable All</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="panel-body">
+            <div className="section-visibility-grid">
+              {SECTION_CONFIGS.map((sec) => {
+                const Icon = sec.icon;
+                const isEnabled = settings.sections?.[sec.key] !== false;
+                return (
+                  <div
+                    key={sec.key}
+                    className={`section-toggle-card ${isEnabled ? '' : 'is-disabled'}`}
+                    onClick={() => handleToggleSection(sec.key)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <div className="section-toggle-info">
+                      <div
+                        className="section-toggle-icon"
+                        style={{
+                          background: isEnabled ? `${sec.color}20` : 'rgba(100, 116, 139, 0.1)',
+                          color: isEnabled ? sec.color : 'var(--text-dim)'
+                        }}
+                      >
+                        <Icon size={18} />
+                      </div>
+                      <div>
+                        <div className="section-toggle-title">
+                          <span>{sec.label}</span>
+                          <span className={`section-status-pill ${isEnabled ? 'enabled' : 'disabled'}`}>
+                            {isEnabled ? 'Visible' : 'Hidden'}
+                          </span>
+                        </div>
+                        <div className="section-toggle-desc">{sec.description}</div>
+                      </div>
+                    </div>
+
+                    <label
+                      className="toggle-switch"
+                      onClick={(e) => e.stopPropagation()}
+                      title={`Toggle ${sec.label}`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isEnabled}
+                        onChange={() => handleToggleSection(sec.key)}
+                      />
+                      <span className="toggle-slider" />
+                    </label>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

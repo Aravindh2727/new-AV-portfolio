@@ -118,6 +118,18 @@ export const createDefaultContactMessage = () => ({
   createdAt: new Date().toISOString()
 });
 
+export const createDefaultSectionVisibility = () => ({
+  hero: true,
+  about: true,
+  skills: true,
+  experience: true,
+  education: true,
+  certifications: true,
+  achievements: true,
+  projects: true,
+  contact: true
+});
+
 export const createDefaultSettings = () => ({
   portfolioUrl: 'https://av-portfolio-08j7.onrender.com',
   showcaseUrl: 'https://av-project-showcase.onrender.com',
@@ -126,6 +138,7 @@ export const createDefaultSettings = () => ({
   footerText: '© 2026 Aravindh V. Engineered with modern React & Firebase.',
   metaDescription: 'Personal developer ecosystem showcasing engineering projects, skills, and experience.',
   maintenanceMode: false,
+  sections: createDefaultSectionVisibility(),
   deployHookPortfolio: 'https://api.render.com/deploy/srv-db5qhc3l550s73b2h2o0?key=dbNKn5ckvVY',
   deployHookShowcase: 'https://api.render.com/deploy/srv-db5qoafavr4c739o9qf0?key=7Usx2xUf1NI',
   deployHookAdmin: 'https://api.render.com/deploy/srv-db5r13g473hc73c43vj0?key=ofHb1sEzg3A'

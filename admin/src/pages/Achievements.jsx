@@ -3,6 +3,7 @@ import { Plus, Edit2, Trash2, Trophy, Eye, EyeOff, X, ExternalLink } from 'lucid
 import AdminLayout from '../components/AdminLayout';
 import ConfirmModal from '../components/ConfirmModal';
 import ImageUploadField from '../components/ImageUploadField';
+import SectionVisibilityBadge from '../components/SectionVisibilityBadge';
 import { useToast } from '../components/Toast';
 import { getAchievements, saveAchievement, deleteAchievement } from '@shared/firebase/queries';
 import { createDefaultAchievement } from '@shared/models/schemas';
@@ -103,7 +104,10 @@ export default function Achievements() {
   };
 
   return (
-    <AdminLayout title="Achievements Management">
+    <AdminLayout
+      title="Achievements Management"
+      actions={<SectionVisibilityBadge sectionKey="achievements" sectionName="Achievements" />}
+    >
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem' }}>
         <button className="btn btn-primary" onClick={handleOpenCreate}>
           <Plus size={16} />

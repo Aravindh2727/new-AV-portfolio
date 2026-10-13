@@ -19,6 +19,7 @@ import {
 import AdminLayout from '../components/AdminLayout';
 import ConfirmModal from '../components/ConfirmModal';
 import ImageUploadField from '../components/ImageUploadField';
+import SectionVisibilityBadge from '../components/SectionVisibilityBadge';
 import { useToast } from '../components/Toast';
 import {
   getProjects,
@@ -227,7 +228,10 @@ export default function Projects() {
   });
 
   return (
-    <AdminLayout title="Project Management">
+    <AdminLayout
+      title="Project Management"
+      actions={<SectionVisibilityBadge sectionKey="projects" sectionName="Featured Projects" />}
+    >
       {/* Controls Bar */}
       <div style={{
         display: 'flex',

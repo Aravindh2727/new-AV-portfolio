@@ -3,6 +3,7 @@ import { Plus, Edit2, Trash2, Award, Eye, EyeOff, X, ExternalLink, Image as Imag
 import AdminLayout from '../components/AdminLayout';
 import ConfirmModal from '../components/ConfirmModal';
 import ImageUploadField from '../components/ImageUploadField';
+import SectionVisibilityBadge from '../components/SectionVisibilityBadge';
 import { useToast } from '../components/Toast';
 import { getCertifications, saveCertification, deleteCertification } from '@shared/firebase/queries';
 import { createDefaultCertification } from '@shared/models/schemas';
@@ -103,7 +104,10 @@ export default function Certifications() {
   };
 
   return (
-    <AdminLayout title="Certifications Management">
+    <AdminLayout
+      title="Certifications Management"
+      actions={<SectionVisibilityBadge sectionKey="certifications" sectionName="Certifications" />}
+    >
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem' }}>
         <button className="btn btn-primary" onClick={handleOpenCreate}>
           <Plus size={16} />

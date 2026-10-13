@@ -1,5 +1,5 @@
 import {
-  collection, doc, getDocs, getDoc, setDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, writeBatch, limit
+  collection, doc, getDocs, getDoc, setDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, writeBatch, limit, onSnapshot
 } from 'firebase/firestore';
 import { db, auth } from './config.js';
 
@@ -410,4 +410,50 @@ export async function deleteContactMessage(id) {
 
 export async function markContactMessageRead(id, read = true) {
   await updateDoc(doc(db, 'contactMessages', id), { read });
+}
+
+export function subscribeContactMessages(onUpdate, onError) {
+  try {
+    const colRef = collection(db, 'contactMessages');
+    const q = query(colRef, orderBy('createdAt', 'desc'));
+    return onSnapshot(
+      q,
+      (snapshot) => {
+        const messages = [];
+        snapshot.forEach((snap) => messages.push({ id: snap.id, ...snap.data() }));
+        onUpdate(messages);
+      },
+      (err) => {
+        console.error('Firestore subscribeContactMessages error:', err);
+        if (onError) onError(err);
+      }
+    );
+  } catch (err) {
+    console.error('subscribeContactMessages setup error:', err);
+    if (onError) onError(err);
+    return () => {};
+  }
+}
+
+/**
+ * ========================================================
+ * SECTION VISIBILITY HELPERS
+ * ========================================================
+ */
+export async function toggleSectionVisibility(sectionKey, isEnabled) {
+  try {
+    const currentSettings = (await getSettings()) || {};
+    const updatedSections = {
+      ...(currentSettings.sections || {}),
+      [sectionKey]: isEnabled
+    };
+    await updateSettings({
+      ...currentSettings,
+      sections: updatedSections
+    });
+    return updatedSections;
+  } catch (err) {
+    console.error('Firestore toggleSectionVisibility error:', err);
+    throw err;
+  }
 }

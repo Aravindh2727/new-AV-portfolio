@@ -3,6 +3,7 @@ import { Save, User, MapPin, Mail, Phone, Globe, Github, Linkedin, Code2, Sparkl
 import AdminLayout from '../components/AdminLayout';
 import ImageUploadField from '../components/ImageUploadField';
 import FileUploadField from '../components/FileUploadField';
+import SectionVisibilityBadge from '../components/SectionVisibilityBadge';
 import { useToast } from '../components/Toast';
 import { getProfile, updateProfile } from '@shared/firebase/queries';
 import { createDefaultProfile } from '@shared/models/schemas';
@@ -85,8 +86,15 @@ export default function Profile() {
     );
   }
 
+  const profileBadges = (
+    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+      <SectionVisibilityBadge sectionKey="hero" sectionName="Hero" />
+      <SectionVisibilityBadge sectionKey="about" sectionName="About" />
+    </div>
+  );
+
   return (
-    <AdminLayout title="Profile Management">
+    <AdminLayout title="Profile Management" actions={profileBadges}>
       <form onSubmit={handleSubmit}>
         <div className="panel-card">
           <div className="panel-header">

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Briefcase, Eye, EyeOff, X, ExternalLink } from 'lucide-react';
 import AdminLayout from '../components/AdminLayout';
 import ConfirmModal from '../components/ConfirmModal';
+import SectionVisibilityBadge from '../components/SectionVisibilityBadge';
 import { useToast } from '../components/Toast';
 import { getExperience, saveExperience, deleteExperience } from '@shared/firebase/queries';
 import { createDefaultExperience } from '@shared/models/schemas';
@@ -119,7 +120,10 @@ export default function Experience() {
   };
 
   return (
-    <AdminLayout title="Experience Management">
+    <AdminLayout
+      title="Experience Management"
+      actions={<SectionVisibilityBadge sectionKey="experience" sectionName="Work Experience" />}
+    >
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem' }}>
         <button className="btn btn-primary" onClick={handleOpenCreate}>
           <Plus size={16} />

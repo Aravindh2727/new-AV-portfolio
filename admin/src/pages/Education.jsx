@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, GraduationCap, Eye, EyeOff, X } from 'lucide-react';
 import AdminLayout from '../components/AdminLayout';
 import ConfirmModal from '../components/ConfirmModal';
+import SectionVisibilityBadge from '../components/SectionVisibilityBadge';
 import { useToast } from '../components/Toast';
 import { getEducation, saveEducation, deleteEducation } from '@shared/firebase/queries';
 import { createDefaultEducation } from '@shared/models/schemas';
@@ -102,7 +103,10 @@ export default function Education() {
   };
 
   return (
-    <AdminLayout title="Education Management">
+    <AdminLayout
+      title="Education Management"
+      actions={<SectionVisibilityBadge sectionKey="education" sectionName="Education" />}
+    >
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem' }}>
         <button className="btn btn-primary" onClick={handleOpenCreate}>
           <Plus size={16} />

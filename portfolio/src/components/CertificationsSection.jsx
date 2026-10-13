@@ -1,28 +1,37 @@
 import React from 'react';
 import { Award, Trophy, ExternalLink, Calendar } from 'lucide-react';
 
-export default function CertificationsSection({ certifications, achievements }) {
+export default function CertificationsSection({
+  certifications,
+  achievements,
+  showCertifications = true,
+  showAchievements = true
+}) {
   const publishedCerts = (certifications || []).filter((c) => c.published !== false);
   const publishedAchs = (achievements || []).filter((a) => a.published !== false);
+
+  if (!showCertifications && !showAchievements) return null;
 
   return (
     <section className="section" id="certifications">
       <div className="portfolio-container">
         {/* Certifications Block */}
-        <div className="section-header">
-          <div className="section-tag">
-            <Award size={13} />
-            <span>Verified Credentials</span>
-          </div>
-          <h2 className="section-title">Certifications & Specializations</h2>
-          <p className="section-subtitle">
-            Industry accredited certifications in cloud computing, front-end architecture, and AI.
-          </p>
-        </div>
+        {showCertifications && (
+          <>
+            <div className="section-header">
+              <div className="section-tag">
+                <Award size={13} />
+                <span>Verified Credentials</span>
+              </div>
+              <h2 className="section-title">Certifications & Specializations</h2>
+              <p className="section-subtitle">
+                Industry accredited certifications in cloud computing, front-end architecture, and AI.
+              </p>
+            </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.5rem', marginBottom: '5rem' }}>
-          {publishedCerts.map((cert) => (
-            <div key={cert.id} className="about-card" style={{ padding: '1.75rem', marginBottom: 0, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.5rem', marginBottom: showAchievements && publishedAchs.length > 0 ? '5rem' : 0 }}>
+              {publishedCerts.map((cert) => (
+                <div key={cert.id} className="about-card" style={{ padding: '1.75rem', marginBottom: 0, display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', marginBottom: '1rem' }}>
                 {cert.imageUrl ? (
                   <img
@@ -69,9 +78,11 @@ export default function CertificationsSection({ certifications, achievements }) 
             </div>
           ))}
         </div>
+      </>
+    )}
 
         {/* Honors & Achievements Block */}
-        {publishedAchs.length > 0 && (
+        {showAchievements && publishedAchs.length > 0 && (
           <>
             <div className="section-header" id="achievements">
               <div className="section-tag" style={{ background: 'rgba(245, 158, 11, 0.12)', color: '#fbbf24', borderColor: 'rgba(245, 158, 11, 0.25)' }}>

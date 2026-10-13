@@ -19,7 +19,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '@shared/theme/ThemeToggle';
 
-export default function AdminLayout({ children, title }) {
+export default function AdminLayout({ children, title, actions }) {
   const { currentUser, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
@@ -126,6 +126,7 @@ export default function AdminLayout({ children, title }) {
           </div>
 
           <div className="admin-header-actions">
+            {actions}
             <ThemeToggle />
 
             <a

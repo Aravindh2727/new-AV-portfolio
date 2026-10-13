@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Code2, Eye, EyeOff, Filter, X } from 'lucide-react';
 import AdminLayout from '../components/AdminLayout';
 import ConfirmModal from '../components/ConfirmModal';
+import SectionVisibilityBadge from '../components/SectionVisibilityBadge';
 import { useToast } from '../components/Toast';
 import { getSkills, saveSkill, deleteSkill } from '@shared/firebase/queries';
 import { SKILL_CATEGORIES, SKILL_LEVELS } from '@shared/constants/categories';
@@ -109,7 +110,10 @@ export default function Skills() {
   });
 
   return (
-    <AdminLayout title="Skills Management">
+    <AdminLayout
+      title="Skills Management"
+      actions={<SectionVisibilityBadge sectionKey="skills" sectionName="Skills" />}
+    >
       {/* Controls Bar */}
       <div style={{
         display: 'flex',

@@ -7,15 +7,28 @@ export default function Navbar({ profile, settings }) {
 
   const showcaseUrl = settings?.showcaseUrl || import.meta.env.VITE_SHOWCASE_URL || 'https://av-project-showcase.onrender.com';
 
+  const sections = {
+    hero: true,
+    about: true,
+    skills: true,
+    experience: true,
+    education: true,
+    certifications: true,
+    achievements: true,
+    projects: true,
+    contact: true,
+    ...(settings?.sections || {})
+  };
+
   const navItems = [
-    { label: 'About', href: '#about' },
-    { label: 'Skills', href: '#skills' },
-    { label: 'Experience', href: '#experience' },
-    { label: 'Education', href: '#education' },
-    { label: 'Certifications', href: '#certifications' },
-    { label: 'Featured Work', href: '#featured' },
-    { label: 'Contact', href: '#contact' }
-  ];
+    { label: 'About', href: '#about', visible: sections.about !== false },
+    { label: 'Skills', href: '#skills', visible: sections.skills !== false },
+    { label: 'Experience', href: '#experience', visible: sections.experience !== false },
+    { label: 'Education', href: '#education', visible: sections.education !== false },
+    { label: 'Certifications', href: '#certifications', visible: sections.certifications !== false || sections.achievements !== false },
+    { label: 'Featured Work', href: '#featured', visible: sections.projects !== false },
+    { label: 'Contact', href: '#contact', visible: sections.contact !== false }
+  ].filter(item => item.visible);
 
   const [activeSection, setActiveSection] = useState('');
 

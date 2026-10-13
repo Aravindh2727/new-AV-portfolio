@@ -126,6 +126,19 @@ export default function App() {
     );
   }
 
+  const sections = {
+    hero: true,
+    about: true,
+    skills: true,
+    experience: true,
+    education: true,
+    certifications: true,
+    achievements: true,
+    projects: true,
+    contact: true,
+    ...(data.settings?.sections || {})
+  };
+
   return (
     <ThemeProvider>
       <div className="portfolio-app">
@@ -136,28 +149,43 @@ export default function App() {
         <Navbar profile={data.profile} settings={data.settings} />
 
         {/* Hero Section */}
-        <Hero profile={data.profile} />
+        {sections.hero !== false && <Hero profile={data.profile} />}
 
         {/* About Section */}
-        <AboutSection profile={data.profile} />
+        {sections.about !== false && <AboutSection profile={data.profile} />}
 
         {/* Technical Skills */}
-        <SkillsSection skills={data.skills} />
+        {sections.skills !== false && <SkillsSection skills={data.skills} />}
 
         {/* Experience & Education Timelines */}
-        <TimelineSection experience={data.experience} education={data.education} />
+        {(sections.experience !== false || sections.education !== false) && (
+          <TimelineSection
+            experience={data.experience}
+            education={data.education}
+            showExperience={sections.experience !== false}
+            showEducation={sections.education !== false}
+          />
+        )}
 
         {/* Certifications & Achievements */}
-        <CertificationsSection
-          certifications={data.certifications}
-          achievements={data.achievements}
-        />
+        {(sections.certifications !== false || sections.achievements !== false) && (
+          <CertificationsSection
+            certifications={data.certifications}
+            achievements={data.achievements}
+            showCertifications={sections.certifications !== false}
+            showAchievements={sections.achievements !== false}
+          />
+        )}
 
         {/* Featured Projects (Only published & featured) */}
-        <FeaturedProjectsSection projects={data.projects} settings={data.settings} />
+        {sections.projects !== false && (
+          <FeaturedProjectsSection projects={data.projects} settings={data.settings} />
+        )}
 
         {/* Contact Form */}
-        <ContactSection profile={data.profile} settings={data.settings} />
+        {sections.contact !== false && (
+          <ContactSection profile={data.profile} settings={data.settings} />
+        )}
 
         {/* Footer */}
         <Footer profile={data.profile} settings={data.settings} />

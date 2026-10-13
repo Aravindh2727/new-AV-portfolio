@@ -1,33 +1,57 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Trash2, CheckCircle2, Clock, Globe, X, ExternalLink } from 'lucide-react';
+import { Mail, Trash2, CheckCircle2, Clock, Globe, X, ExternalLink, RefreshCw } from 'lucide-react';
 import AdminLayout from '../components/AdminLayout';
 import ConfirmModal from '../components/ConfirmModal';
 import { useToast } from '../components/Toast';
-import { getContactMessages, deleteContactMessage, markContactMessageRead } from '@shared/firebase/queries';
+import { getContactMessages, deleteContactMessage, markContactMessageRead, subscribeContactMessages } from '@shared/firebase/queries';
 import { formatDateTime } from '@shared/utilities/formatters';
 
 export default function Messages() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastRefreshed, setLastRefreshed] = useState(null);
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const { addToast } = useToast();
 
-  const loadMessages = async () => {
+  const loadMessages = async (showToast = false) => {
     try {
-      setLoading(true);
+      setRefreshing(true);
       const data = await getContactMessages();
       setMessages(data);
+      setLastRefreshed(new Date());
+      if (showToast) {
+        addToast(`Messages reloaded (${data.length} messages found)`, 'success');
+      }
     } catch (err) {
       console.error(err);
       addToast('Failed to load contact messages', 'error');
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
   useEffect(() => {
-    loadMessages();
+    // Initial fetch
+    loadMessages(false);
+
+    // Live subscription for incoming contact messages
+    const unsubscribe = subscribeContactMessages(
+      (realtimeData) => {
+        setMessages(realtimeData);
+        setLastRefreshed(new Date());
+        setLoading(false);
+      },
+      (err) => {
+        console.warn('Real-time listener notice:', err);
+      }
+    );
+
+    return () => {
+      if (typeof unsubscribe === 'function') unsubscribe();
+    };
   }, []);
 
   const handleSelectMessage = async (msg) => {
@@ -53,25 +77,57 @@ export default function Messages() {
         setSelectedMessage(null);
       }
       setDeleteTarget(null);
-      await loadMessages();
+      await loadMessages(false);
     } catch (err) {
       console.error(err);
       addToast('Failed to delete message', 'error');
     }
   };
 
+  const reloadAction = (
+    <button
+      type="button"
+      className="btn btn-secondary btn-sm"
+      onClick={() => loadMessages(true)}
+      disabled={refreshing}
+      title="Reload contact messages without refreshing browser page"
+      style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}
+    >
+      <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} />
+      <span>{refreshing ? 'Reloading...' : 'Reload Messages'}</span>
+    </button>
+  );
+
   return (
-    <AdminLayout title="Contact Inquiries & Messages">
+    <AdminLayout title="Contact Inquiries & Messages" actions={reloadAction}>
       <div className={`messages-layout ${selectedMessage ? 'has-selected' : ''}`}>
         {/* Messages List Panel */}
         <div className="panel-card">
           <div className="panel-header">
             <div>
               <div className="panel-title">Inquiries Inbox</div>
-              <div className="panel-subtitle">
-                Total {messages.length} messages received ({messages.filter((m) => !m.read).length} unread)
+              <div className="panel-subtitle" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                <span>Total {messages.length} messages received ({messages.filter((m) => !m.read).length} unread)</span>
+                {lastRefreshed && (
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <Clock size={12} />
+                    <span>Updated {lastRefreshed.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+                  </span>
+                )}
               </div>
             </div>
+
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={() => loadMessages(true)}
+              disabled={refreshing}
+              title="Reload contact messages without refreshing full page"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}
+            >
+              <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} />
+              <span>{refreshing ? 'Reloading...' : 'Reload Inbox'}</span>
+            </button>
           </div>
 
           <div className="table-wrap">

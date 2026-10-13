@@ -1,14 +1,17 @@
 import React from 'react';
 import { Briefcase, GraduationCap, MapPin, Calendar, ExternalLink } from 'lucide-react';
 
-export default function TimelineSection({ experience, education }) {
+export default function TimelineSection({ experience, education, showExperience = true, showEducation = true }) {
   const publishedExp = (experience || []).filter((e) => e.published !== false);
   const publishedEdu = (education || []).filter((e) => e.published !== false);
 
+  if (!showExperience && !showEducation) return null;
+
   return (
-    <div id="experience">
+    <div>
       {/* Experience Section */}
-      <section className="section">
+      {showExperience && (
+        <section className="section" id="experience">
         <div className="portfolio-container">
           <div className="section-header">
             <div className="section-tag">
@@ -92,63 +95,66 @@ export default function TimelineSection({ experience, education }) {
           </div>
         </div>
       </section>
+      )}
 
       {/* Education Section */}
-      <section className="section" id="education" style={{ paddingTop: '2rem' }}>
-        <div className="portfolio-container">
-          <div className="section-header">
-            <div className="section-tag">
-              <GraduationCap size={13} />
-              <span>Academic Foundations</span>
+      {showEducation && (
+        <section className="section" id="education" style={{ paddingTop: showExperience ? '2rem' : '5rem' }}>
+          <div className="portfolio-container">
+            <div className="section-header">
+              <div className="section-tag">
+                <GraduationCap size={13} />
+                <span>Academic Foundations</span>
+              </div>
+              <h2 className="section-title">Education</h2>
+              <p className="section-subtitle">
+                Formal engineering education and academic accomplishments.
+              </p>
             </div>
-            <h2 className="section-title">Education</h2>
-            <p className="section-subtitle">
-              Formal engineering education and academic accomplishments.
-            </p>
-          </div>
 
-          <div className="timeline-wrap">
-            {publishedEdu.map((item) => (
-              <div key={item.id} className="timeline-item">
-                <div className="timeline-dot" style={{ background: '#8b5cf6', boxShadow: '0 0 10px #8b5cf6' }} />
-                <div className="timeline-card">
-                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    <div>
-                      <h3 className="timeline-role">{item.degree}</h3>
-                      <div style={{ fontSize: '1rem', color: '#c084fc', fontWeight: 600, marginTop: '0.2rem' }}>
-                        {item.institution}
+            <div className="timeline-wrap">
+              {publishedEdu.map((item) => (
+                <div key={item.id} className="timeline-item">
+                  <div className="timeline-dot" style={{ background: '#8b5cf6', boxShadow: '0 0 10px #8b5cf6' }} />
+                  <div className="timeline-card">
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      <div>
+                        <h3 className="timeline-role">{item.degree}</h3>
+                        <div style={{ fontSize: '1rem', color: '#c084fc', fontWeight: 600, marginTop: '0.2rem' }}>
+                          {item.institution}
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span className="badge" style={{ background: 'var(--pill-bg)', color: 'var(--text-secondary)' }}>
+                          <Calendar size={12} />
+                          <span>{item.startYear} — {item.endYear || 'Present'}</span>
+                        </span>
+                        {item.grade && (
+                          <span className="badge" style={{ background: 'rgba(139, 92, 246, 0.15)', color: '#c084fc' }}>
+                            {item.grade}
+                          </span>
+                        )}
                       </div>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span className="badge" style={{ background: 'var(--pill-bg)', color: 'var(--text-secondary)' }}>
-                        <Calendar size={12} />
-                        <span>{item.startYear} — {item.endYear || 'Present'}</span>
-                      </span>
-                      {item.grade && (
-                        <span className="badge" style={{ background: 'rgba(139, 92, 246, 0.15)', color: '#c084fc' }}>
-                          {item.grade}
+                    <div className="timeline-meta">
+                      {item.location && (
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                          <MapPin size={13} />
+                          <span>{item.location}</span>
                         </span>
                       )}
                     </div>
-                  </div>
 
-                  <div className="timeline-meta">
-                    {item.location && (
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                        <MapPin size={13} />
-                        <span>{item.location}</span>
-                      </span>
-                    )}
+                    {item.description && <p className="timeline-desc">{item.description}</p>}
                   </div>
-
-                  {item.description && <p className="timeline-desc">{item.description}</p>}
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }
