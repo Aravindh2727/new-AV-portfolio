@@ -39,7 +39,7 @@ export default function FeaturedProjectsSection({ projects, settings }) {
         ) : (
           <div className="projects-grid">
             {featuredList.map((proj) => {
-              const detailsUrl = `${showcaseBaseUrl}/projects/${proj.slug}`;
+              const detailsUrl = `${showcaseBaseUrl}/projects/${proj.slug || proj.id}`;
 
               return (
                 <div key={proj.id || proj.slug} className="project-card">

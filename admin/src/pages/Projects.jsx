@@ -371,7 +371,7 @@ export default function Projects() {
                           </a>
                         )}
                         <a
-                          href={`http://localhost:5174/projects/${proj.slug}`}
+                          href={`${import.meta.env.VITE_SHOWCASE_URL || 'http://localhost:5174'}/projects/${proj.slug || proj.id}`}
                           target="_blank"
                           rel="noreferrer"
                           className="badge"

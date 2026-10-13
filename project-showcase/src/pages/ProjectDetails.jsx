@@ -25,6 +25,7 @@ export default function ProjectDetails({ profile, settings }) {
   const [project, setProject] = useState(null);
   const [relatedProjects, setRelatedProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [activeLightboxImg, setActiveLightboxImg] = useState(null);
 
   const portfolioUrl = settings?.portfolioUrl || import.meta.env.VITE_PORTFOLIO_URL || 'https://av-portfolio-08j7.onrender.com';
@@ -33,26 +34,31 @@ export default function ProjectDetails({ profile, settings }) {
     async function loadData() {
       try {
         setLoading(true);
-        const current = await getProjectBySlug(slug);
+        setError(null);
+        const current = await getProjectBySlug(slug, { publishedOnly: true });
         if (!current) {
           setProject(null);
-          setLoading(false);
           return;
         }
 
         setProject(current);
 
         // Fetch related projects from the same category
-        const all = await getProjects({ publishedOnly: true });
-        const related = all
-          .filter((p) => p.slug !== slug && p.category === current.category)
-          .slice(0, 3);
-        setRelatedProjects(related);
+        try {
+          const all = await getProjects({ publishedOnly: true });
+          const related = all
+            .filter((p) => p.slug !== current.slug && p.id !== current.id && p.category === current.category)
+            .slice(0, 3);
+          setRelatedProjects(related);
+        } catch (relErr) {
+          console.warn('Failed to load related projects:', relErr);
+        }
 
         // Set document title dynamically for SEO
         document.title = `${current.title} | ${profile?.name || 'Aravindh V'} Engineering`;
       } catch (err) {
         console.error('Failed to load project details:', err);
+        setError(err.message || 'Failed to connect to the showcase repository.');
       } finally {
         setLoading(false);
       }
@@ -65,13 +71,61 @@ export default function ProjectDetails({ profile, settings }) {
   if (loading) {
     return (
       <div style={{
-        minHeight: '80vh',
+        minHeight: '70vh',
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
+        gap: '1.25rem',
         color: 'var(--text-muted)'
       }}>
-        Loading project architecture...
+        <div style={{
+          width: 44,
+          height: 44,
+          border: '3px solid rgba(16, 185, 129, 0.2)',
+          borderTopColor: '#10b981',
+          borderRadius: '50%',
+          animation: 'details-spin 0.8s linear infinite'
+        }} />
+        <style>{`@keyframes details-spin { to { transform: rotate(360deg); } }`}</style>
+        <span style={{ fontSize: '0.95rem', fontWeight: 500, letterSpacing: '0.02em' }}>
+          Loading project architecture...
+        </span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="showcase-container" style={{ padding: '6rem 0', textAlign: 'center' }}>
+        <div style={{
+          maxWidth: '520px',
+          margin: '0 auto',
+          background: 'var(--bg-card)',
+          border: '1px solid rgba(239, 68, 68, 0.3)',
+          borderRadius: '16px',
+          padding: '3rem 2rem'
+        }}>
+          <AlertTriangle size={44} color="#ef4444" style={{ margin: '0 auto 1.25rem auto' }} />
+          <h2 style={{ fontSize: '1.75rem', color: 'var(--text-pure)', marginBottom: '0.75rem', fontWeight: 800 }}>
+            Unable to Load Project
+          </h2>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', fontSize: '0.95rem', lineHeight: '1.6' }}>
+            {error}
+          </p>
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button
+              onClick={() => window.location.reload()}
+              className="cat-tab-btn active"
+              style={{ padding: '0.75rem 1.5rem', cursor: 'pointer' }}
+            >
+              Retry Connection
+            </button>
+            <Link to="/" className="cat-tab-btn" style={{ padding: '0.75rem 1.5rem' }}>
+              ← Back to Showcase
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
@@ -79,13 +133,37 @@ export default function ProjectDetails({ profile, settings }) {
   if (!project) {
     return (
       <div className="showcase-container" style={{ padding: '6rem 0', textAlign: 'center' }}>
-        <h2 style={{ fontSize: '2rem', color: 'var(--text-pure)', marginBottom: '1rem' }}>Project Not Found</h2>
-        <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>
-          The project slug "{slug}" does not exist in the database or has not been published yet.
-        </p>
-        <Link to="/" className="cat-tab-btn active" style={{ padding: '0.75rem 1.5rem' }}>
-          ← Back to Project Showcase
-        </Link>
+        <div style={{
+          maxWidth: '540px',
+          margin: '0 auto',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border-tech)',
+          borderRadius: '16px',
+          padding: '3.5rem 2rem'
+        }}>
+          <div style={{
+            width: 56,
+            height: 56,
+            borderRadius: '50%',
+            background: 'rgba(16, 185, 129, 0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 1.25rem auto'
+          }}>
+            <Layers size={28} color="#34d399" />
+          </div>
+          <h2 style={{ fontSize: '1.85rem', color: 'var(--text-pure)', marginBottom: '0.75rem', fontWeight: 800 }}>
+            Project Not Found
+          </h2>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', fontSize: '0.95rem', lineHeight: '1.6' }}>
+            The project slug <code style={{ color: '#34d399', background: 'rgba(16, 185, 129, 0.1)', padding: '0.15rem 0.45rem', borderRadius: '4px', fontFamily: 'monospace' }}>"{slug}"</code> does not exist in the database or has not been published yet.
+          </p>
+          <Link to="/" className="cat-tab-btn active" style={{ padding: '0.75rem 1.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+            <ArrowLeft size={16} />
+            <span>Back to Project Showcase</span>
+          </Link>
+        </div>
       </div>
     );
   }

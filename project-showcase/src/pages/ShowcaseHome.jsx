@@ -400,7 +400,7 @@ export default function ShowcaseHome({ projects, profile, settings }) {
                     </div>
 
                     <Link
-                      to={`/projects/${proj.slug}`}
+                      to={`/projects/${proj.slug || proj.id}`}
                       style={{
                         fontSize: '0.85rem',
                         fontWeight: 700,

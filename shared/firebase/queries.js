@@ -1,7 +1,7 @@
 import {
   collection, doc, getDocs, getDoc, setDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, writeBatch, limit
 } from 'firebase/firestore';
-import { db } from './config.js';
+import { db, auth } from './config.js';
 
 /**
  * ========================================================
@@ -50,12 +50,15 @@ export async function updateSettings(data) {
  * PROJECTS QUERIES
  * ========================================================
  */
-export async function getProjects({ publishedOnly = false, featuredOnly = false, category = null } = {}) {
+export async function getProjects({ publishedOnly, featuredOnly = false, category = null } = {}) {
   let projects = [];
   try {
+    const isAdmin = Boolean(auth?.currentUser);
+    const requirePublished = publishedOnly !== undefined ? publishedOnly : !isAdmin;
+
     const colRef = collection(db, 'projects');
     const constraints = [];
-    if (publishedOnly) constraints.push(where('published', '==', true));
+    if (requirePublished) constraints.push(where('published', '==', true));
     if (featuredOnly) constraints.push(where('featured', '==', true));
 
     const q = constraints.length > 0 ? query(colRef, ...constraints) : colRef;
@@ -73,25 +76,76 @@ export async function getProjects({ publishedOnly = false, featuredOnly = false,
   return projects;
 }
 
-export async function getProjectBySlug(slug) {
+export async function getProjectBySlug(slug, { publishedOnly } = {}) {
   if (!slug) return null;
+  const cleanSlug = String(slug).trim();
+  const isAdmin = Boolean(auth?.currentUser);
+  const requirePublished = publishedOnly !== undefined ? publishedOnly : !isAdmin;
+
   try {
-    const q = query(collection(db, 'projects'), where('slug', '==', slug), limit(1));
+    // 1. Query by exact slug
+    const constraints = [where('slug', '==', cleanSlug)];
+    if (requirePublished) {
+      constraints.push(where('published', '==', true));
+    }
+    const q = query(collection(db, 'projects'), ...constraints, limit(1));
     const snapshot = await getDocs(q);
+
     if (!snapshot.empty) {
-      return { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
+      const snapDoc = snapshot.docs[0];
+      return { id: snapDoc.id, ...snapDoc.data() };
+    }
+
+    // 1b. If not found and cleanSlug has uppercase letters, try lowercase slug
+    const lowerSlug = cleanSlug.toLowerCase();
+    if (lowerSlug !== cleanSlug) {
+      const lowerConstraints = [where('slug', '==', lowerSlug)];
+      if (requirePublished) {
+        lowerConstraints.push(where('published', '==', true));
+      }
+      const lowerQ = query(collection(db, 'projects'), ...lowerConstraints, limit(1));
+      const lowerSnapshot = await getDocs(lowerQ);
+      if (!lowerSnapshot.empty) {
+        const snapDoc = lowerSnapshot.docs[0];
+        return { id: snapDoc.id, ...snapDoc.data() };
+      }
     }
   } catch (error) {
-    console.error('Firestore getProjectBySlug error:', error);
+    console.error('Firestore getProjectBySlug query error:', error);
   }
+
+  // 2. Fallback: Check if the slug parameter is actually a Firestore Document ID
+  if (!cleanSlug.includes('/')) {
+    try {
+      const docSnap = await getDoc(doc(db, 'projects', cleanSlug));
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (!requirePublished || data.published === true) {
+          return { id: docSnap.id, ...data };
+        }
+      }
+    } catch {
+      // Non-existent document or permission error on doc lookup - ignore fallback
+    }
+  }
+
   return null;
 }
 
-export async function getProjectById(id) {
+export async function getProjectById(id, { publishedOnly } = {}) {
   if (!id) return null;
+  const cleanId = String(id).trim();
+  const isAdmin = Boolean(auth?.currentUser);
+  const requirePublished = publishedOnly !== undefined ? publishedOnly : !isAdmin;
+
   try {
-    const docSnap = await getDoc(doc(db, 'projects', id));
-    if (docSnap.exists()) return { id: docSnap.id, ...docSnap.data() };
+    const docSnap = await getDoc(doc(db, 'projects', cleanId));
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      if (!requirePublished || data.published === true) {
+        return { id: docSnap.id, ...data };
+      }
+    }
   } catch (error) {
     console.error('Firestore getProjectById error:', error);
   }
