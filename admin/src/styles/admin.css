@@ -691,7 +691,7 @@ button, input, select, textarea {
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .modal-card {
@@ -700,11 +700,24 @@ button, input, select, textarea {
   border-radius: var(--radius-lg);
   max-width: 750px;
   width: 100%;
-  max-height: 90vh;
+  max-height: calc(100vh - 3rem);
   display: flex;
   flex-direction: column;
   box-shadow: var(--shadow-lg);
   animation: modalIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Ensure any form wrapping modal-body & modal-footer participates cleanly in flex layout */
+.modal-card > form,
+.modal-card form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  margin: 0;
 }
 
 @keyframes modalIn {
@@ -718,12 +731,34 @@ button, input, select, textarea {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-shrink: 0;
+  background-color: var(--modal-card-bg);
 }
 
 .modal-body {
   padding: 1.75rem;
   overflow-y: auto;
   flex: 1;
+  min-height: 0;
+  overscroll-behavior: contain;
+}
+
+/* Sleek custom scrollbar for modal body */
+.modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 999px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }
 
 .modal-footer {
@@ -732,6 +767,8 @@ button, input, select, textarea {
   display: flex;
   justify-content: flex-end;
   gap: 0.75rem;
+  flex-shrink: 0;
+  background-color: var(--modal-card-bg);
 }
 
 /* ================= TOAST NOTIFICATION ================= */
@@ -878,7 +915,7 @@ button, input, select, textarea {
     padding: 1rem;
   }
   .modal-card {
-    max-height: 94vh;
+    max-height: calc(100vh - 1.5rem);
   }
   .metrics-grid {
     grid-template-columns: 1fr;
